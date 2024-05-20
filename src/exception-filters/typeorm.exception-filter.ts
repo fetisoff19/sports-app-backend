@@ -1,31 +1,32 @@
-import { ExceptionResponse } from '@common/types'
-import { GlobalResponseError } from '@exception-filters/_global-response-error'
+import { ExceptionResponse } from '@/common/types';
+import { GlobalResponseError } from '@/exception-filters/_global-response-error';
 import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
   InternalServerErrorException,
-} from '@nestjs/common'
+} from '@nestjs/common';
 import { Request, Response } from 'express'
-import { QueryFailedError, TypeORMError } from 'typeorm'
+import { QueryFailedError, TypeORMError } from 'typeorm';
 
 @Catch(TypeORMError, QueryFailedError)
 export class TypeORMExceptionFilter implements ExceptionFilter {
   private defaultExceptionResponse =
-    new InternalServerErrorException().getResponse() as ExceptionResponse
+    new InternalServerErrorException().getResponse() as ExceptionResponse;
 
-  private exceptionResponse: ExceptionResponse = this.defaultExceptionResponse
+  private exceptionResponse: ExceptionResponse = this.defaultExceptionResponse;
 
   catch(exception: TypeORMError | QueryFailedError, host: ArgumentsHost) {
     // уникальный индификатор запроса (uuid) + ошибка
 
-    const ctx = host.switchToHttp()
-    const response = ctx.getResponse<Response>()
-    const request = ctx.getRequest<Request>()
-    const status = this.exceptionResponse.statusCode
+    const ctx = host.switchToHttp();
+    const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse<Response>();
+
+    const status = this.exceptionResponse.statusCode;
     response
       .status(status)
-      .json(GlobalResponseError(status, exception.message, request))
+      .send(GlobalResponseError(status, exception.message, request));
   }
 }
 

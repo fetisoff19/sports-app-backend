@@ -1,29 +1,28 @@
-import { timePeriod } from '@common/constants'
-import { getMaxValueForArrayPeriods } from '@common/helpers'
-import { Record } from '@common/types'
-import { PowerCurveRepository } from '@db/repository'
-import { Injectable } from '@nestjs/common'
+import { timePeriod } from '@/common/constants';
+import { getMaxValueForArrayPeriods } from '@/common/helpers';
+import { WorkoutRecord as WorkoutRecord } from '@/common/types';
+import { PowerCurveRepository } from '@/db/repository';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PowerCurveService {
   constructor(private readonly powerCurveRepository: PowerCurveRepository) {}
 
-  makePoints(records: Record[]) {
+  makePoints(records: WorkoutRecord[]) {
     if (records.length) {
-      return getMaxValueForArrayPeriods(records, 'power', timePeriod)
+      return getMaxValueForArrayPeriods(records, 'power', timePeriod);
     }
-    return null
+    return null;
   }
 
-  create(points: object, workoutId: number) {
-    console.log(points)
+  create(points: Record<string, number>, workoutUuid: string) {
     return this.powerCurveRepository.create({
       ...points,
-      workoutId,
-    })
+      workoutUuid,
+    });
   }
 
-  async findByWorkoutId(id: number | string) {
-    return this.powerCurveRepository.findByWorkoutId(id)
+  async findByWorkoutUuid(uuid: string) {
+    return this.powerCurveRepository.findByWorkoutUuid(uuid);
   }
 }

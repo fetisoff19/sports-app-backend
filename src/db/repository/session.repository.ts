@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common'
-import { DataSource, Repository } from 'typeorm'
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
 
-import { WorkoutSessionModel } from '../model'
+import { SessionModel } from '../model';
 
 @Injectable()
-export class WorkoutSessionRepository extends Repository<WorkoutSessionModel> {
+export class SessionRepository extends Repository<SessionModel> {
   constructor(private dataSource: DataSource) {
-    super(WorkoutSessionModel, dataSource.createEntityManager())
+    super(SessionModel, dataSource.createEntityManager());
   }
 
   // protected getBaseQuery(): SelectQueryBuilder<WorkoutModel> {

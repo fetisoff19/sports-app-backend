@@ -1,12 +1,12 @@
-import { DefaultFields } from '@/db/model/_default'
-import { WorkoutModel } from '@/db/model/workout.model'
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
+import { DefaultFields } from '@/db/model/_default';
+import { WorkoutModel } from '@/db/model/workout.model';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 
 @Entity({ name: 'chart_data' })
 export class ChartDataModel extends DefaultFields {
 
   @Column({ type: 'uuid', name: 'workout_uuid' })
-  workoutUuid: string
+  workoutUuid: string;
 
   @OneToOne(
     () => WorkoutModel,
@@ -14,14 +14,14 @@ export class ChartDataModel extends DefaultFields {
     { cascade: ['remove'] }
   )
   @JoinColumn({ name: 'workout_uuid' })
-  workout: WorkoutModel
+  workout: WorkoutModel;
 
   @Column({ type: 'jsonb', name: 'points' })
-  points: string
+  points: string;
 
   @Column({ type: 'int', name: 'array_length' })
-  arrayLength: number
+  arrayLength: number;
 
   @Column({ type: 'int', name: 'orig_length' })
-  origLength: number
+  origLength: number;
 }

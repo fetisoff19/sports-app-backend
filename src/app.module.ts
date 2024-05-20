@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AuthModule } from './microservice/auth';
 import config from './config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
@@ -10,15 +8,39 @@ import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { AuthGuard } from '@/guards';
 import { HttpExceptionFilter, TypeORMExceptionFilter } from '@/exception-filters';
 import { CustomValidationPipe } from '@/pipes';
+import { DbConfig } from '@/db/config';
+import { UserModule } from '@/microservice/user/user.module';
+import { AuthModule } from '@/microservice/auth/auth.module';
+import { WorkoutsModule } from '@/microservice/workout/workout.module';
+import { PolylineModule } from '@/microservice/polyline/polyline.module';
+import { ChartsDataModule } from '@/microservice/charts-data/charts-data.module';
+import { PowerCurveModule } from '@/microservice/power-curve/power-curve.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { LoggerModule } from 'nestjs-pino';
+import { pinoConfig } from '@/common/helpers';
+import fs from 'node:fs';
 
 
 @Module({
   imports: [
-    AuthModule,
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 200,
+    }]),
     ConfigModule.forRoot({
       ignoreEnvFile: true,
       isGlobal: true,
       load: [config],
+    }),
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return ({
+          pinoHttp: pinoConfig(configService.get<string>('log.token')),
+        });
+      }
     }),
     BullModule.forRootAsync({
       imports: [ConfigModule],
@@ -35,26 +57,19 @@ import { CustomValidationPipe } from '@/pipes';
         },
       }),
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('db.host'),
-        port: configService.get<number>('db.port'),
-        username: configService.get<string>('db.user'),
-        password: configService.get<string>('db.pass'),
-        database: configService.get<string>('db.name'),
-        synchronize: false,
-        autoLoadEntities: true,
-      }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'files'),
     }),
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 200,
-    }]),
+    TypeOrmModule.forRootAsync({
+      useClass: DbConfig,
+    }),
+    UserModule,
+    AuthModule,
+    WorkoutsModule,
+    PolylineModule,
+    ChartsDataModule,
+    PowerCurveModule,
   ],
-  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,

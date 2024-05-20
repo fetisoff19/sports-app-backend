@@ -1,4 +1,4 @@
-export interface SessionData {
+export interface Session {
   timestamp: Date
   startTime: Date
 
