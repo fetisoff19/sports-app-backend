@@ -1,22 +1,22 @@
-import { Injectable } from '@nestjs/common'
-import { DataSource, Repository, SelectQueryBuilder } from 'typeorm'
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 
-import { ChartDataModel } from '../model'
+import { ChartDataModel } from '../model';
 
 @Injectable()
 export class ChartDataRepository extends Repository<ChartDataModel> {
   constructor(private dataSource: DataSource) {
-    super(ChartDataModel, dataSource.createEntityManager())
+    super(ChartDataModel, dataSource.createEntityManager());
   }
 
   protected getBaseQuery(): SelectQueryBuilder<ChartDataModel> {
-    return this.createQueryBuilder('data')
+    return this.createQueryBuilder('data');
   }
 
-  async findByWorkoutId(id: number | string): Promise<ChartDataModel | null> {
+  async findByWorkoutUuid(uuid: string): Promise<ChartDataModel | null> {
     return this.getBaseQuery()
-      .andWhere('data.workoutId = :id', { id: Number(id) })
-      .getOne()
+      .andWhere('data.workoutId = :uuid', { uuid })
+      .getOne();
   }
   //
   // async findByUserIdAndSha256(

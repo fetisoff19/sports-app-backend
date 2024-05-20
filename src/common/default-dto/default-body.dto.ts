@@ -1,7 +1,7 @@
-import { IsInt, IsPositive } from 'class-validator'
+import { IsInt, IsPositive } from 'class-validator';
 
 export class DefaultBodyDto {
   @IsInt()
   @IsPositive()
-  id: number
+  id: number;
 }

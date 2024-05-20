@@ -1,19 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { Test, TestingModule } from '@nestjs/testing';
 
-import { PolylineController } from './polyline.controller'
+import { PolylineController } from './polyline.controller';
 
 describe('PolylineController', () => {
-  let controller: PolylineController
+  let controller: PolylineController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PolylineController],
-    }).compile()
+    }).compile();
 
-    controller = module.get<PolylineController>(PolylineController)
-  })
+    controller = module.get<PolylineController>(PolylineController);
+  });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined()
-  })
-})
+    expect(controller).toBeDefined();
+  });
+});

@@ -1,8 +1,9 @@
 export type PublicUser = {
-  userName: string
+  email: string
+  login: string
   image: string
-  createdAt: Date
-  updatedAt: Date
+// createdAt: Date
+  // updatedAt: Date
   // workouts?: [object] | []
   // stats?: object
   // info?: object

@@ -1,4 +1,4 @@
-import { ResponseError } from '@common/types'
+import { ResponseError } from '@/common/types';
 import { Request } from 'express'
 
 export function GlobalResponseError(
@@ -12,5 +12,5 @@ export function GlobalResponseError(
     timestamp: new Date().toString(),
     path: request.url,
     method: request.method,
-  }
+  };
 }

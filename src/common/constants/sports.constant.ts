@@ -6,4 +6,4 @@ export const sports = [
   'walking',
   'hiking',
   'other',
-] as const
+] as const;

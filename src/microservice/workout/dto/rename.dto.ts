@@ -5,9 +5,9 @@ export class RenameDto extends DefaultDto {
   @IsOptional()
   @IsString()
   @MinLength(1)
-  name: string
+  name?: string
 
   @IsOptional()
   @IsString()
-  note: string
+  note?: string
 }
