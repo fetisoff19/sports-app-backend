@@ -1,131 +1,131 @@
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class WorkoutDto {
   @IsString()
   @IsNotEmpty()
-  user: string;
+  user: string
 
   @IsString()
   @IsNotEmpty()
-  sport: string;
+  sport: string
 
   @IsNumber()
   @IsOptional()
-  cadenceCoef: number;
+  cadenceCoef: number
 
   @IsString()
   @IsOptional()
-  subSport: string;
+  subSport: string
 
   @IsNumber()
-  totalTimerTime: number;
+  totalTimerTime: number
 
   @IsNumber()
-  totalElapsedTime: number;
+  totalElapsedTime: number
 
   @IsDate()
-  startTime: Date;
+  startTime: Date
 
   @IsDate()
-  timestamp: Date;
+  timestamp: Date
   @IsDate()
-  date: Date;
+  date: Date
 
   @IsNumber()
   @IsOptional()
-  totalDistance: number;
+  totalDistance: number
 
   @IsNumber()
   @IsOptional()
-  avgSpeed: number;
+  avgSpeed: number
 
   @IsNumber()
   @IsOptional()
-  enhancedAvgSpeed: number;
+  enhancedAvgSpeed: number
 
   @IsNumber()
   @IsOptional()
-  maxSpeed: number;
+  maxSpeed: number
 
   @IsNumber()
   @IsOptional()
-  enhancedMaxSpeed: number;
+  enhancedMaxSpeed: number
 
   @IsNumber()
   @IsOptional()
-  avgHeartRate: number;
+  avgHeartRate: number
 
   @IsNumber()
   @IsOptional()
-  minHeartRate: number;
+  minHeartRate: number
 
   @IsNumber()
   @IsOptional()
-  maxHeartRate: number;
+  maxHeartRate: number
 
   @IsNumber()
   @IsOptional()
-  avgCadence: number;
+  avgCadence: number
 
   @IsNumber()
   @IsOptional()
-  maxCadence: number;
+  maxCadence: number
 
   @IsNumber()
   @IsOptional()
-  avgPower: number;
+  avgPower: number
 
   @IsNumber()
   @IsOptional()
-  maxPower: number;
+  maxPower: number
 
   @IsNumber()
   @IsOptional()
-  normalizedPower: number;
+  normalizedPower: number
 
   @IsNumber()
   @IsOptional()
-  totalAscent: number;
+  totalAscent: number
 
   @IsNumber()
   @IsOptional()
-  totalDescent: number;
+  totalDescent: number
 
   @IsNumber()
   @IsOptional()
-  maxAltitude: number;
+  maxAltitude: number
 
   @IsNumber()
   @IsOptional()
-  avgAltitude: number;
+  avgAltitude: number
 
   @IsNumber()
   @IsOptional()
-  minAltitude: number;
+  minAltitude: number
 
   @IsNumber()
   @IsOptional()
   @IsNumber()
   @IsOptional()
-  maxTemperature: number;
+  maxTemperature: number
 
   @IsNumber()
   @IsOptional()
-  avgTemperature: number;
+  avgTemperature: number
 
   @IsNumber()
   @IsOptional()
-  totalStrides: number;
+  totalStrides: number
 
   @IsNumber()
   @IsOptional()
-  trainingStressScore: number;
+  trainingStressScore: number
 
   @IsNumber()
   @IsOptional()
-  totalCalories: number;
+  totalCalories: number
 
   @IsNumber()
   @IsOptional()
-  timeStep: number;
+  timeStep: number
 }

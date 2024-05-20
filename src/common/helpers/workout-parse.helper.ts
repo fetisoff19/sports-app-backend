@@ -1,82 +1,80 @@
-import { fileIdMesgsKeys, recordMesgsKeys, sports } from '@/common/constants';
-import { ConvertValueHelper } from '@/common/helpers/convert-value.helper';
-import { DeviseInfo, Info, Session } from '@/common/types';
-import { WorkoutRecord } from '@/common/types';
-import { CustomError } from '@/custom-error';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { pick } from 'lodash';
-import { Decoder, Stream } from '@garmin/fitsdk';
+import { fileIdMesgsKeys, recordMesgsKeys, sports } from '@common/constants'
+import { ConvertValueHelper } from '@common/helpers/convert-value.helper'
+import { DeviseInfo, Info, SessionData } from '@common/types'
+import { Record } from '@common/types/record'
+import { CustomError } from '@custom-error'
+import { HttpException, HttpStatus } from '@nestjs/common'
+import { pick } from 'lodash'
 
 export class WorkoutParseHelper {
-  static async parseFit(file: any) {
+  static async parseFit(file: Express.Multer.File) {
     try {
-      // // bad solution, but it's the only way
-      // const Stream = (await eval(`import('@garmin/fitsdk/src/stream.js')`))
-      //   .default
-      // const Decoder = (await eval(`import('@garmin/fitsdk/src/decoder.js')`))
-      //   .default
-      const streamFromBuffer = Stream.fromBuffer(file?.buffer);
-      const decoder = new Decoder(streamFromBuffer);
-      const { messages } = decoder.read();
+      const Stream = (await eval(`import('@garmin-fit/sdk/src/stream.js')`))
+        .default
+      const Decoder = (await eval(`import('@garmin-fit/sdk/src/decoder.js')`))
+        .default
+      const streamFromBuffer = Stream.fromBuffer(file?.buffer)
+      const decoder = new Decoder(streamFromBuffer)
+      const { messages } = decoder.read()
       if (messages?.sessionMesgs?.at(0)) {
         return {
           ...messages,
           size: file?.size,
           originalname: file?.originalname,
-        };
+        }
       }
-      throw new CustomError(422, `File ${file?.originalname} not supported`);
+      throw new CustomError(422, `File ${file?.originalname} not supported`)
     } catch (e) {
-      throw new CustomError(422, `File ${file?.originalname} not supported`);
+      throw new CustomError(422, `File ${file?.originalname} not supported`)
     }
   }
 
   static getWorkoutData(parseFit) {
     try {
-      const sessionMesgs: any = parseFit?.sessionMesgs?.at(0);
-      const recordMesgs: any[] = parseFit?.recordMesgs;
+      const sessionMesgs: any = parseFit?.sessionMesgs?.at(0)
+      const recordMesgs: any[] = parseFit?.recordMesgs
       const fileIdMesgs: DeviseInfo = {
         ...parseFit?.fileIdMesgs?.at(0),
         ...parseFit?.deviceInfoMesgs?.at(0),
-      };
-      const wktName: string = parseFit?.workoutMesgs?.at(0)?.wktName;
-      const fileName: string = parseFit?.originalname;
+      }
+      const wktName: string = parseFit?.workoutMesgs?.at(0)?.wktName
+      const fileName: string = parseFit?.originalname
       const device: string =
-        Object.values(pick(fileIdMesgs, fileIdMesgsKeys))?.join(' ') || '';
-      const workoutName: string = this.getWorkoutName(fileName, wktName);
+        Object.values(pick(fileIdMesgs, fileIdMesgsKeys))?.join(' ') || ''
+      const workoutName: string = this.getWorkoutName(fileName, wktName)
 
-      const sessionData: Session = this.getSessionData(
+      const sessionData: SessionData = this.getSessionData(
         sessionMesgs,
         recordMesgs.length,
-      );
+      )
       const info = this.getSessionInfo(
         sessionMesgs,
         device,
         workoutName,
         fileName,
         parseFit.size,
-      );
-      const records: WorkoutRecord[] = recordMesgs.map((record) =>
+      )
+      const records: Record[] = recordMesgs.map((record) =>
         pick(record, recordMesgsKeys),
-      );
-      const laps = parseFit?.lapMesgs;
-      return { sessionData, info, records, laps };
+      )
+      const laps = parseFit?.lapMesgs
+      return { sessionData, info, records, laps }
     } catch (e) {
       throw new HttpException(
         `File ${parseFit?.fileName} not supported`,
         HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      )
     }
   }
 
   private static getSessionData(session: any, recordsLength: number) {
-    const result = {};
-    const cadenceCoef: number = this.getCadenceCoef(session?.sport || 'other');
+    const result = {}
+    const cadenceCoef: number = this.getCadenceCoef(session?.sport || 'other')
     const timeStep: number =
       Number(
         ((session?.totalTimerTime || recordsLength) / recordsLength).toFixed(1),
-      ) || 1;
-    const smoothing: number = this.getSmoothing(timeStep, recordsLength);
+      ) || 1
+    const smoothing: number = this.getSmoothing(timeStep, recordsLength)
     const obj = {
       timestamp: new Date(session.timestamp),
       startTime: new Date(session.startTime),
@@ -123,13 +121,13 @@ export class WorkoutParseHelper {
       cadenceCoef,
       timeStep,
       smoothing,
-    };
+    }
     for (const key in obj) {
       if (obj[key]) {
-        result[key] = obj[key];
+        result[key] = obj[key]
       }
     }
-    return result as Session;
+    return result as SessionData
   }
 
   private static getSessionInfo(
@@ -142,7 +140,7 @@ export class WorkoutParseHelper {
     const sport =
       session?.sport && sports.includes(session.sport.toString().toLowerCase())
         ? session.sport.toString()
-        : 'other';
+        : 'other'
     return {
       sport,
       subSport: session.subSport,
@@ -152,7 +150,7 @@ export class WorkoutParseHelper {
       fileName,
       size,
       note: '',
-    };
+    }
   }
 
   private static getWorkoutName(
@@ -161,13 +159,13 @@ export class WorkoutParseHelper {
   ): string {
     if (name) {
       if (Array.isArray(name)) {
-        return name.join(' ');
+        return name.join(' ')
       }
       if (typeof name === 'string') {
-        return name;
+        return name
       }
     }
-    return fileName.split('.').slice(0, -1).join('');
+    return fileName.split('.').slice(0, -1).join('')
   }
 
   private static getCadenceCoef(sport: (typeof sports)[number]): number {
@@ -177,15 +175,15 @@ export class WorkoutParseHelper {
       sport === 'walking' ||
       sport === 'hiking'
     ) {
-      return 2;
+      return 2
     }
-    return 1;
+    return 1
   }
 
   private static getSmoothing(timeStep: number, recordsLength: number): number {
-    if (recordsLength < 3600) return 1;
-    if (timeStep < 1.5 && recordsLength < 7200) return 2;
-    if (recordsLength < 14400) return 4;
-    else return 8;
+    if (recordsLength < 3600) return 1
+    if (timeStep < 1.5 && recordsLength < 7200) return 2
+    if (recordsLength < 14400) return 4
+    else return 8
   }
 }

@@ -1,5 +1,5 @@
 export interface WorkoutMainInfo {
-  uuid: string
+  id: number
   distance: number | null
   time: number | null
   elevation: number | null

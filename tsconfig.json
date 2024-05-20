@@ -5,7 +5,7 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-//    "types": ["reflect-metadata", "node"],
+    "types": ["reflect-metadata", "node"],
     "allowSyntheticDefaultImports": true,
     "target": "ES2022",
     "sourceMap": true,
@@ -20,6 +20,6 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "noFallthroughCasesInSwitch": false
   }
 }

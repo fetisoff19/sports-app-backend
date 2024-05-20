@@ -1,19 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing'
 
-import { PowerCurveController } from './power-curve.controller';
+import { PowerCurveController } from './power-curve.controller'
 
 describe('PowerCurveController', () => {
-  let controller: PowerCurveController;
+  let controller: PowerCurveController
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PowerCurveController],
-    }).compile();
+    }).compile()
 
-    controller = module.get<PowerCurveController>(PowerCurveController);
-  });
+    controller = module.get<PowerCurveController>(PowerCurveController)
+  })
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+    expect(controller).toBeDefined()
+  })
+})

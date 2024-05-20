@@ -11,11 +11,7 @@ export class migration1715627000000 implements MigrationInterface {
         "array_length" INT NOT NULL,
         "orig_length" INT NOT NULL,
         "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          CONSTRAINT "fk_workout" 
-            FOREIGN KEY(workout_uuid) 
-            REFERENCES public."workout"(uuid) 
-            ON DELETE CASCADE
+        "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
 
       CREATE INDEX IF NOT EXISTS idx_polyline_workout_uuid ON public."polyline" USING hash (workout_uuid);

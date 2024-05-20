@@ -1,3 +1,3 @@
 export type Payload = {
-  uuid: string
+  email: string
 }

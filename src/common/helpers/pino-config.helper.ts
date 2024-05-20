@@ -26,6 +26,9 @@ export const pinoConfig = (sourceToken: string) => ({
         target: '@logtail/pino',
         options: { sourceToken },
       },
+      {
+        target: 'pino-pretty',
+      },
     ],
   },
 })

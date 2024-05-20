@@ -1,44 +1,34 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import fastifyCsrf from '@fastify/csrf-protection';
+import { fastify } from 'fastify';
 import { AppModule } from './app.module';
+import { randomUUID } from 'node:crypto';
+import multiPart from '@fastify/multipart';
 import * as process from 'node:process';
-import { HttpExceptionFilter, TypeORMExceptionFilter } from '@/exception-filters';
-import { CustomValidationPipe } from '@/pipes';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
-import * as fs from 'node:fs';
 
+import middlewareOnRequest from './middleware/onRequest.middleware';
+import middlewareOnResponse from './middleware/onResponse.middleware';
+
+const fastifyInstance = fastify({
+  disableRequestLogging: true,
+  genReqId: () => randomUUID(),
+  logger: { transport: { target: process.env?.NODE_ENV === 'prod' ? null : 'pino-pretty' } },
+});
+
+middlewareOnRequest(fastifyInstance);
+middlewareOnResponse(fastifyInstance);
+// fastifyInstance.register(multiPart, { limits: { files: 20, fileSize: 1073741824 } });
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(fastifyInstance as any), {
     cors: true,
-    bufferLogs: true
+    bufferLogs: true,
   });
-
-  app.enableCors({
-    exposedHeaders: 'Authorization'
-  })
-
-  const configService = app.get<ConfigService>(ConfigService);
-  const port = configService.get<number>('port');
-
-  app.setGlobalPrefix('api');
-  app.useGlobalPipes(new CustomValidationPipe());
-  app.useGlobalFilters(new TypeORMExceptionFilter(), new HttpExceptionFilter());
-  app.useGlobalFilters(new TypeORMExceptionFilter(), new HttpExceptionFilter());
-
-  const config = new DocumentBuilder()
-    .setTitle('sports-app')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  process.env?.NODE_ENV !== 'prod' && SwaggerModule.setup('api', app, document);
-
-  const path = configService.get('log.dir')
-  await fs.promises.mkdir(path, { recursive: true});
-
-  await app.listen(port, '0.0.0.0')
-    .then(() =>
-      console.log(`⚡️ [server]: Server is running on port = ${port}`),
-  );
+  app.useGlobalPipes(new ValidationPipe());
+  // await app.register(fastifyCsrf);
+  await app.listen(3000, '0.0.0.0');
 }
 
 bootstrap();

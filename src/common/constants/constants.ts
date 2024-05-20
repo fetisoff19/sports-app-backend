@@ -35,13 +35,13 @@ export const stats: Record<
     avgHeartRate: [0, 0],
     avgPower: [0, 0],
   },
-};
+}
 
 export const fileIdMesgsKeys = [
   'manufacturer',
   'productName',
   'garminProduct',
-] as const;
+] as const
 
 export const sessionMesgsKeys = [
   'timestamp',
@@ -86,7 +86,7 @@ export const sessionMesgsKeys = [
 
   'totalCalories',
   'trainingStressScore',
-] as const;
+] as const
 
 export const recordMesgsKeys = [
   'timestamp',
@@ -109,7 +109,7 @@ export const recordMesgsKeys = [
   'enhancedAltitude',
   'enhancedSpeed',
   'fractionalCadence',
-] as const;
+] as const
 
 // export const lapsMesgsKeys = [
 //   'timestamp',
@@ -248,4 +248,4 @@ export const timePeriod = [
   16200,
   17100,
   18000, //+900  300min
-];
+]

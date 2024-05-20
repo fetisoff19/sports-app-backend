@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator'
 
 export class QueryDto {
   @IsOptional()
   @IsNotEmpty()
-  id: string;
+  id: string
 }

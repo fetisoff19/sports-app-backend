@@ -1,21 +1,12 @@
+import { TokenModule } from '@modules/token/token.module'
+import { UserModule } from '@modules/user/user.module'
+import { Module } from '@nestjs/common'
 
-import { Module } from '@nestjs/common';
-
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { UserModule } from '@/microservice/user/user.module';
-import { JwtModule } from '@nestjs/jwt';
-import { WorkoutsModule } from '@/microservice/workout/workout.module';
+import { AuthController } from './auth.controller'
+import { AuthService } from './auth.service'
 
 @Module({
-  imports: [
-    UserModule,
-    WorkoutsModule,
-    JwtModule.register({
-    global: true,
-    secret: 'sa_secret',
-    signOptions: { expiresIn: '60d' },
-  })],
+  imports: [UserModule, TokenModule],
   providers: [AuthService],
   controllers: [AuthController],
   exports: [AuthService],

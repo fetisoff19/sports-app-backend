@@ -11,7 +11,6 @@ export class migration1715624000000 implements MigrationInterface {
         "email" TEXT NOT NULL,
         "login" TEXT NOT NULL,
         "password" TEXT NOT NULL,
-        "image" TEXT,
         "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
