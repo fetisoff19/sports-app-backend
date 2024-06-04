@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class migration1715626000000 implements MigrationInterface {
 
@@ -19,11 +19,11 @@ export class migration1715626000000 implements MigrationInterface {
       );
 
       CREATE INDEX IF NOT EXISTS idx_chart_data_workout_uuid ON public."chart_data" USING hash (workout_uuid);
-    `);
+    `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP TABLE IF EXISTS public."chart_data";');
+    await queryRunner.query('DROP TABLE IF EXISTS public."chart_data";')
   }
 
 }

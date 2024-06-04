@@ -1,77 +1,77 @@
 import {
   ChartDataModel, PolylineModel, PowerCurveModel, SessionModel,
   UserModel,
-} from '@/db/model';
+} from '@/db/model'
 
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
-import { DefaultFields } from '@/db/model/_default';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
+import { DefaultFields } from '@/db/model/_default'
 
 @Entity({ name: 'workout' })
 export class WorkoutModel extends DefaultFields {
 
   @Column({ type: 'uuid', name: 'user_uuid' })
-  userUuid: string;
+  user_uuid: string
 
   @ManyToOne(
     () => UserModel,
     (model) => model.workouts,
-    { cascade: ['remove'] }
+    { cascade: ['remove'] },
   )
   @JoinColumn({ name: 'user_uuid' })
-  user: UserModel;
+  user: UserModel
 
   @Column({ type: 'text', name: 'sha256' })
-  sha256: string;
+  sha256: string
 
   @Column({ type: 'text', name: 'file_name' })
-  fileName: string;
+  file_name: string
 
   @Column({ type: 'text', name: 'name' })
-  name: string;
+  name: string
 
   @Column({ type: 'text', name: 'sport' })
-  sport: string;
+  sport: string
 
   @Column({ type: 'text', name: 'sub_sport', nullable: true })
-  subSport: string;
+  sub_sport: string
 
   @Column({ type: 'text', name: 'date' })
-  date: Date;
+  date: Date
 
   @Column({ type: 'real', name: 'size' })
-  size: number;
+  size: number
 
   @Column({ type: 'text', name: 'map_image' })
-  mapImage: string | null;
+  map: string | null
 
   @Column({ type: 'text', name: 'note', nullable: true })
-  note: string | null;
+  note: string | null
 
   @Column({ type: 'text', name: 'device', nullable: true })
-  device: string | null;
+  device: string | null
 
   @OneToOne(
     () => SessionModel,
-    (model) => model.workout
+    (model) => model.workout,
   )
-  session: SessionModel;
+  session: SessionModel
 
   @OneToOne(
     () => PolylineModel,
-    (model) => model.workout
+    (model) => model.workout,
   )
-  polyline: PolylineModel;
+  polyline: PolylineModel
 
   @OneToOne(
     () => PowerCurveModel,
-    (model) => model.workout
+    (model) => model.workout,
   )
-  powerCurve: PowerCurveModel;
+  powerCurve: PowerCurveModel
 
   @OneToOne(
     () => ChartDataModel,
     (model) => model.workout,
-    { nullable: true }
+    { nullable: true },
   )
-  chartData: ChartDataModel;
+  chartData: ChartDataModel
 }

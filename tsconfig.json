@@ -1,4 +1,5 @@
-{
+{//    "types": ["reflect-metadata", "node"],
+
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,

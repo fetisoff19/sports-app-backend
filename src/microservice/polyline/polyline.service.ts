@@ -1,26 +1,22 @@
-import { WorkoutRecord } from '@/common/types';
-import { PolylineRepository } from '@/db/repository';
-import { Injectable } from '@nestjs/common';
+import { WorkoutRecord } from '@/common/types'
+import { PolylineRepository } from '@/db/repository'
+import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class PolylineService {
   constructor(private readonly polylineRepository: PolylineRepository) {}
 
-  create(points: [number, number][], origLength: number, workoutUuid: string) {
+  public create(points: [number, number][], origLength: number, workoutUuid: string) {
     return this.polylineRepository.create({
       points: JSON.stringify(points),
-      origLength,
-      arrayLength: points.length,
-      workoutUuid,
-    });
+      orig_length: origLength,
+      array_length: points.length,
+      workout_uuid: workoutUuid,
+    })
   }
-
-  async findByWorkoutUuid(uuid: string) {
-    return this.polylineRepository.findByWorkoutUuid(uuid);
-  }
-
-  getPoints(records: WorkoutRecord[], smoothing: number) {
-    const points: [number, number][] = [];
+  
+  public getPoints(records: WorkoutRecord[], smoothing: number) {
+    const points: [number, number][] = []
     if (Object.hasOwn(records.at(0), 'positionLat') ||
       Object.hasOwn(records[Math.round(records.length / 2)],'positionLat') ||
       Object.hasOwn(records.at(-1),'positionLat')
@@ -31,17 +27,17 @@ export class PolylineService {
           Object.hasOwn(record,'positionLat') &&
           Object.hasOwn(record,'positionLong')
         ) {
-          points.push(this.convertGarminLatLongToNormal(record));
+          points.push(this.convertGarminLatLongToNormal(record))
         }
-      });
-      return points;
+      })
+      return points
     }
-    return points;
+    return points
   }
 
   private convertGarminLatLongToNormal(records: WorkoutRecord): [number, number] {
-    const { positionLat, positionLong } = records;
-    const divisor = 11930465;
-    return [positionLat / divisor, positionLong / divisor];
+    const { positionLat, positionLong } = records
+    const divisor = 11930465
+    return [positionLat / divisor, positionLong / divisor]
   }
 }

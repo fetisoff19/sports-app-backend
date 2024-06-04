@@ -1,11 +1,10 @@
-import { UserModel } from '@/db/model';
-import { UserRepository } from '@/db/repository';
-import { forwardRef, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserModel } from '@/db/model'
+import { UserRepository } from '@/db/repository'
+import {  Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
-import { WorkoutsModule } from '@/microservice/workout/workout.module';
+import { UserController } from './user.controller'
+import { UserService } from './user.service'
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserModel])],

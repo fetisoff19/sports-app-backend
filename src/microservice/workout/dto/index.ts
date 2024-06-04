@@ -1,2 +1,2 @@
-export * from './pagination.dto';
-export * from './rename.dto';
+export * from './pagination.dto'
+export * from './rename.dto'

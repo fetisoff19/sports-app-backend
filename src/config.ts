@@ -1,6 +1,6 @@
-import { DataSource } from 'typeorm';
-import * as path from 'node:path';
-import * as process from 'process';
+import { DataSource } from 'typeorm'
+import * as path from 'node:path'
+import * as process from 'process'
 
 const config = {
   env: process.env.NODE_ENV || 'dev',
@@ -27,9 +27,9 @@ const config = {
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT, 10) || 6379,
   },
-};
+}
 
-export default () => config;
+export default () => config
 
 export const connectionSource = new DataSource({
   type: 'postgres',
@@ -39,4 +39,4 @@ export const connectionSource = new DataSource({
   password: config.db.pass,
   database: config.db.name,
   migrations: [path.join(__dirname, 'db', 'migration', '**', '*.js')],
-});
+})

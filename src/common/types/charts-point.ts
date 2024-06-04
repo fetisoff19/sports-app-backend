@@ -1,9 +1,9 @@
-export interface ChartPoint {
-  timestamp: number | null
-  distance: number | null
-  speed: number | null
-  heartRate: number | null
-  power: number | null
-  cadence: number | null
-  altitude: number | null
+export type ChartPoint = {
+  ts: number | null
+  d: number | null
+  s: number | null
+  hr: number | null
+  p: number | null
+  c: number | null
+  a: number | null
 }

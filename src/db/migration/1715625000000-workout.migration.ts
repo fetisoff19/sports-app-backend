@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class migration1715625000000 implements MigrationInterface {
 
@@ -29,11 +29,11 @@ export class migration1715625000000 implements MigrationInterface {
       CREATE INDEX IF NOT EXISTS idx_workout_user_uuid ON public."workout" USING hash (user_uuid);
       CREATE INDEX IF NOT EXISTS idx_workout_created_at ON public."workout" USING brin (created_at);
     
-    `);
+    `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP TABLE IF EXISTS public."workout";');
+    await queryRunner.query('DROP TABLE IF EXISTS public."workout";')
   }
 
 }

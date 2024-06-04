@@ -4,6 +4,7 @@ export interface WorkoutMainInfo {
   time: number | null
   elevation: number | null
   speed: number | null
+  enhanced_speed: number | null
   hr: number | null
   power: number | null
   cadence: number | null

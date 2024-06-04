@@ -1,28 +1,28 @@
-import { WorkoutModel } from '@/db/model';
-import { DefaultFields } from '@/db/model/_default';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { WorkoutModel } from '@/db/model'
+import { DefaultFields } from '@/db/model/_default'
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
 
 @Entity({ name: 'polyline' })
 export class PolylineModel extends DefaultFields {
 
   @Column({ type: 'uuid', name: 'workout_uuid' })
-  workoutUuid: string;
+  workout_uuid: string
 
   @OneToOne(
     () => WorkoutModel,
     (model) => model.polyline,
-    { cascade: ['remove'] }
+    { cascade: ['remove'] },
   )
   @JoinColumn({ name: 'workout_uuid' })
-  workout: WorkoutModel;
+  workout: WorkoutModel
 
   @Column({ type: 'jsonb', name: 'points' })
-  points: string | null;
+  points: string | null
 
   @Column({ type: 'int', name: 'array_length' })
-  arrayLength: number;
+  array_length: number
 
   @Column({ type: 'int', name: 'orig_length' })
-  origLength: number;
+  orig_length: number
 
 }

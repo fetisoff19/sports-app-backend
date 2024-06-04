@@ -1,21 +1,21 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { DefaultFields } from '@/db/model/_default';
-import { WorkoutModel } from '@/db/model/workout.model';
+import { Column, Entity, OneToMany } from 'typeorm'
+import { DefaultFields } from '@/db/model/_default'
+import { WorkoutModel } from '@/db/model/workout.model'
 
 @Entity('user')
 export class UserModel extends DefaultFields {
   @Column({ type: 'text', name: 'email' })
-  email: string;
+  email: string
 
   @Column({ type: 'text', name: 'password' })
-  password: string;
+  password: string
 
   @Column({ type: 'text', name: 'login' })
-  login: string;
+  login: string
 
   @Column({ type: 'text', name: 'image', nullable: true })
-  image: string | null;
+  image: string | null
 
   @OneToMany(() => WorkoutModel, (model) => model.user)
-  workouts: WorkoutModel[];
+  workouts: WorkoutModel[]
 }

@@ -1,5 +1,5 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
-import { timePeriod } from '@/common/constants';
+import { MigrationInterface, QueryRunner } from 'typeorm'
+import { timePeriod } from '@/common/constants'
 
 export class migration1715629000000 implements MigrationInterface {
 
@@ -18,11 +18,11 @@ export class migration1715629000000 implements MigrationInterface {
       );
 
       CREATE INDEX IF NOT EXISTS idx_power_curve_workout_uuid ON public."power_curve" USING hash (workout_uuid);
-    `);
+    `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP TABLE IF EXISTS public."power_curve";');
+    await queryRunner.query('DROP TABLE IF EXISTS public."power_curve";')
   }
 
 }

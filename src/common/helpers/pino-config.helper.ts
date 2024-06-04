@@ -4,7 +4,7 @@ export const pinoConfig = (sourceToken: string) => ({
     paths: [
       'req.headers.authorization',
       'res.headers.authorization',
-      'res.headers["x-powered-by"]'
+      'res.headers["x-powered-by"]',
     ],
     remove: true,
   },

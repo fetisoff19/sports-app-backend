@@ -1,15 +1,15 @@
 import {
   Column,
   PrimaryGeneratedColumn,
-} from 'typeorm';
+} from 'typeorm'
 
 export abstract class DefaultFields {
   @PrimaryGeneratedColumn('uuid')
-  uuid: string;
+  uuid: string
 
   @Column({ type: 'timestamptz', name: 'created_at', default: 'now()', nullable: false })
-  createdAt: Date;
+  created_at: Date
 
   @Column({ type: 'timestamptz', name: 'updated_at', default: 'now()', nullable: false  })
-  updatedAt: Date;
+  updated_at: Date
 }

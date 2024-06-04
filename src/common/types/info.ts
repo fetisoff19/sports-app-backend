@@ -1,8 +1,8 @@
 export interface Info {
-  fileName: string
-  workoutName: string
+  file_name: string
+  name: string
   sport: string | null
-  subSport: string | null
+  sub_sport: string | null
   date: Date
   size: number
   // accessLink?: string

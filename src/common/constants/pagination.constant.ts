@@ -1,4 +1,4 @@
-export const sort = ['DESC', 'ASC'] as const;
+export const sort = ['DESC', 'ASC'] as const
 export const sortParams = [
   'date',
   'distance',
@@ -8,4 +8,5 @@ export const sortParams = [
   'hr',
   'power',
   'cadence',
-] as const;
+  'enhanced_speed'
+] as const

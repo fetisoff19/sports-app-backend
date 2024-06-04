@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class migration1715628000000 implements MigrationInterface {
 
@@ -8,7 +8,9 @@ export class migration1715628000000 implements MigrationInterface {
         "uuid" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         "workout_uuid" UUID NOT NULL,
         
-        "time_step" REAL NOT NULL DEFAULT 1,        
+        "start_time" TIMESTAMPTZ,
+        "end_time" TIMESTAMPTZ,
+        "time_step" REAL NOT NULL DEFAULT 1,
         "smoothing" INT NOT NULL DEFAULT 1,
         "cadence_coef" INT NOT NULL DEFAULT 1,
         "total_distance" REAL NOT NULL DEFAULT 0,
@@ -39,18 +41,18 @@ export class migration1715628000000 implements MigrationInterface {
         
         "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          CONSTRAINT "fk_workout" 
-            FOREIGN KEY(workout_uuid) 
-            REFERENCES public."workout"(uuid) 
+          CONSTRAINT "fk_workout"
+            FOREIGN KEY(workout_uuid)
+            REFERENCES public."workout"(uuid)
             ON DELETE CASCADE
       );
 
       CREATE INDEX IF NOT EXISTS idx_session_workout_uuid ON public."session" USING hash (workout_uuid);
-    `);
+    `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP TABLE IF EXISTS public."session";');
+    await queryRunner.query('DROP TABLE IF EXISTS public."session";')
   }
 
 }
