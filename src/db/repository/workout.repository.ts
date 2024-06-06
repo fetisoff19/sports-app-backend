@@ -88,7 +88,6 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
   ): Promise<TableStats> {
    const query = this.getBaseQuery()
       .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
-      .andWhere(`workout.sport = :sport OR ${!sport}`, { sport })
       .andWhere(`workout.date BETWEEN :start AND :end`, { start, end })
       .leftJoinAndSelect('workout.session', 'session')
       .select([
