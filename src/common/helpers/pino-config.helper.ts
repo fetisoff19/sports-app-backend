@@ -1,4 +1,4 @@
-export const pinoConfig = (sourceToken: string) => ({
+export const pinoConfig = (sourceToken: string, dir: string) => ({
   genReqId: () => crypto.randomUUID(),
   redact: {
     paths: [
@@ -14,7 +14,7 @@ export const pinoConfig = (sourceToken: string) => ({
         level: 'trace',
         target: 'pino/file',
         options: {
-          destination: 'logs/file.log',
+          destination: `${dir}/file.log`,
         },
       },
       {

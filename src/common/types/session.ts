@@ -4,7 +4,6 @@ export interface Session {
   
   time_step: number
   smoothing: number
-  // date: Date
   total_elapsed_time?: number
   
   total_timer_time: number
@@ -46,51 +45,4 @@ export interface Session {
   
   total_calories?: number
   training_stress_score?: number
-  // timestamp: Date
-  // startTime: Date
-  //
-  // time_step: number
-  // smoothing: number
-  // // date: Date
-  // totalElapsedTime?: number
-  //
-  // totalTimerTime: number
-  // totalDistance: number
-  // totalWork?: number
-  // totalStrides?: number
-  //
-  // enhancedAvgSpeed?: number
-  // enhancedMaxSpeed?: number
-  // avgSpeed?: number
-  // maxSpeed?: number
-  //
-  // avgHeartRate?: number
-  // maxHeartRate?: number
-  // minHeartRate?: number
-  //
-  // cadence_coef?: number
-  // avgCadence?: number
-  // maxCadence?: number
-  // avgTemperature?: number
-  // maxTemperature?: number
-  //
-  // enhancedMaxAltitude?: number
-  // enhancedMinAltitude?: number
-  // maxAltitude?: number
-  // avgAltitude?: number
-  // minAltitude?: number
-  // totalAscent?: number
-  // totalDescent?: number
-  //
-  // avgPower?: number
-  // maxPower?: number
-  // normalizedPower?: number
-  // leftRightBalance?: number
-  // avgLeftTorqueEffectiveness?: number
-  // avgRightTorqueEffectiveness?: number
-  // avgLeftPedalSmoothness?: number
-  // avgRightPedalSmoothness?: number
-  //
-  // totalCalories?: number
-  // trainingStressScore?: number
 }

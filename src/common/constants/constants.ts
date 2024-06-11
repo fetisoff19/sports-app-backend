@@ -1,89 +1,9 @@
-// export const stats: Record<string, Record<string, number | [number, number]>> = {
-//   sports: {
-//     other: 0,
-//     running: 0,
-//     cycling: 0,
-//   },
-//   allTime: {
-//     totalWorkouts: 0,
-//     totalTimerTime: 0,
-//     totalDistance: 0,
-//     totalAscent: 0,
-//     totalDescent: 0,
-//   },
-//   running: {
-//     totalWorkouts: 0,
-//     totalTimerTime: 0,
-//     totalDistance: 0,
-//     totalAscent: 0,
-//     totalDescent: 0,
-//     avgPace: [0, 0],
-//     avgRunningCadence: [0, 0],
-//     avgHeartRate: [0, 0],
-//   },
-//   cycling: {
-//     totalWorkouts: 0,
-//     totalTimerTime: 0,
-//     totalDistance: 0,
-//     totalAscent: 0,
-//     totalDescent: 0,
-//     avgSpeed: [0, 0],
-//     avgCadence: [0, 0],
-//     avgHeartRate: [0, 0],
-//     avgPower: [0, 0],
-//   },
-// };
-
-export const fileIdMesgsKeys = [
+export const deviceInfoKeys = [
   'manufacturer',
   'productName',
   'garminProduct',
 ] as const
 
-// export const sessionMesgsKeys = [
-//   'timestamp',
-//   'startTime',
-//   'totalElapsedTime',
-//   'totalTimerTime',
-//   'totalDistance',
-//   'totalWork',
-//   'totalStrides',
-//   'sport',
-//   'subSport',
-//
-//   'enhancedAvgSpeed',
-//   'enhancedMaxSpeed',
-//   'avgSpeed',
-//   'maxSpeed',
-//
-//   'avgHeartRate',
-//   'maxHeartRate',
-//   'minHeartRate',
-//
-//   'avgCadence',
-//   'maxCadence',
-//   'avgTemperature',
-//   'maxTemperature',
-//
-//   'enhancedMaxAltitude',
-//   'enhancedMinAltitude',
-//   'maxAltitude',
-//   'minAltitude',
-//   'totalAscent',
-//   'totalDescent',
-//
-//   'avgPower',
-//   'maxPower',
-//   'normalizedPower',
-//   'leftRightBalance',
-//   'avgLeftTorqueEffectiveness',
-//   'avgRightTorqueEffectiveness',
-//   'avgLeftPedalSmoothness',
-//   'avgRightPedalSmoothness',
-//
-//   'totalCalories',
-//   'trainingStressScore',
-// ] as const;
 
 export const recordMesgsKeys = [
   'timestamp',

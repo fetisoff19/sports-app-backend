@@ -14,12 +14,12 @@ import { WorkoutsModule } from '@/microservice/workout/workout.module'
 import { PolylineModule } from '@/microservice/polyline/polyline.module'
 import { ChartsDataModule } from '@/microservice/charts-data/charts-data.module'
 import { PowerCurveModule } from '@/microservice/power-curve/power-curve.module'
-import { ServeStaticModule } from '@nestjs/serve-static'
-import { join } from 'path'
 import { LoggerModule } from 'nestjs-pino'
 import { pinoConfig } from '@/common/helpers'
-import { AuthGuard } from '@/guards'
 import { StatsModule } from '@/microservice/stats/stats.module'
+import { JwtGuard } from '@/guards';
+import { join } from 'path';
+import * as fs from 'node:fs'
 
 
 @Module({
@@ -29,19 +29,21 @@ import { StatsModule } from '@/microservice/stats/stats.module'
       limit: 200,
     }]),
     ConfigModule.forRoot({
-      ignoreEnvFile: true,
       isGlobal: true,
       load: [config],
     }),
-    // LoggerModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: async (configService: ConfigService) => {
-    //     return ({
-    //       pinoHttp: pinoConfig(configService.get<string>('log.token')),
-    //     });
-    //   }
-    // }),
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const dir = configService.get('log.dir')
+        await fs.promises.mkdir(join(__dirname, '..', dir), { recursive: true })
+        const token = configService.get<string>('log.token')
+        return ({
+          pinoHttp: pinoConfig(token, dir),
+        });
+      }
+    }),
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -57,9 +59,6 @@ import { StatsModule } from '@/microservice/stats/stats.module'
         },
       }),
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'files'),
-    }),
     TypeOrmModule.forRootAsync({
       useClass: DbConfig,
     }),
@@ -74,7 +73,7 @@ import { StatsModule } from '@/microservice/stats/stats.module'
   providers: [
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
+      useClass: JwtGuard,
     },
     {
       provide: APP_FILTER,

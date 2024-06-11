@@ -5,7 +5,6 @@ export interface Info {
   sub_sport: string | null
   date: Date
   size: number
-  // accessLink?: string
   note: string
   device: string
 }

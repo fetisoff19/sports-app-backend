@@ -1,20 +1,20 @@
-import { fileIdMesgsKeys, recordMesgsKeys, sports } from '@/common/constants'
+import { deviceInfoKeys, recordMesgsKeys, sports } from '@/common/constants'
 import { ConvertValueHelper } from '@/common/helpers/convert-value.helper'
 import { DeviseInfo, Info, Session } from '@/common/types'
 import { WorkoutRecord } from '@/common/types'
 import { CustomError } from '@/custom-error'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { pick } from 'lodash'
-import { Decoder, Stream } from '@garmin/fitsdk'
+// import { Decoder, Stream } from '@garmin/fitsdk'
 
 export class WorkoutParseHelper {
   static async parseFit(file: Express.Multer.File) {
     try {
       // // bad solution, but it's the only way
-      // const Stream = (await eval(`import('@garmin/fitsdk/src/stream.js')`))
-      //   .default
-      // const Decoder = (await eval(`import('@garmin/fitsdk/src/decoder.js')`))
-      //   .default
+      const Stream = (await eval(`import('@garmin/fitsdk/src/stream.js')`))
+        .default
+      const Decoder = (await eval(`import('@garmin/fitsdk/src/decoder.js')`))
+        .default
       const streamFromBuffer = Stream.fromBuffer(file?.buffer)
       const decoder = new Decoder(streamFromBuffer)
       const { messages } = decoder.read()
@@ -41,7 +41,7 @@ export class WorkoutParseHelper {
       }
       const wktName: string = parseFit?.workoutMesgs?.at(0)?.wktName
       const fileName: string = parseFit?.originalname
-      const device: string = Object.values(pick(fileIdMesgs, fileIdMesgsKeys))?.join(' ') || ''
+      const device: string = Object.values(pick(fileIdMesgs, deviceInfoKeys))?.join(' ') || ''
       const workoutName: string = this.getWorkoutName(fileName, wktName)
 
       const sessionData: Session = this.getSessionData(
@@ -84,8 +84,7 @@ export class WorkoutParseHelper {
       
       total_distance: ConvertValueHelper.convertDistance(session?.totalDistance),
       
-      // avg_speed: session?.totalDistance > 1 ? session?.avgSpeed || session?.enhancedAvgSpeed : 0, // m/s
-        avg_speed: session?.totalDistance > 1 ? ConvertValueHelper.convertSpeed(
+      avg_speed: session?.totalDistance > 1 ? ConvertValueHelper.convertSpeed(
         session?.avgSpeed,
         cadence_coef,
       ) : 0, // km/h or min/km
@@ -93,7 +92,6 @@ export class WorkoutParseHelper {
         session?.enhancedAvgSpeed || session?.avgSpeed,
         cadence_coef,
       ) : 0, // km/h or min/km
-      // max_speed: session?.maxSpeed,
       max_speed: session?.totalDistance > 1 ? ConvertValueHelper.convertSpeed(
         session?.maxSpeed,
         cadence_coef,

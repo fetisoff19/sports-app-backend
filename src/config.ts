@@ -2,41 +2,52 @@ import { DataSource } from 'typeorm'
 import * as path from 'node:path'
 import * as process from 'process'
 
-const config = {
-  env: process.env.NODE_ENV || 'dev',
-  secret: process.env.APP_SECRET || 'sa_secret',
-  port: process.env.PORT || 3000,
+const config = () => ({
+  env: process.env.NODE_ENV,
+  port: process.env.PORT,
 
+  auth: {
+    secret: process.env.APP_SECRET,
+    expiresIn: process.env.EXPIRES_IN,
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    googleCallbackUrl: process.env.GOOGLE_CB_URL,
+    githubClientId: process.env.GITHUB_CLIENT_ID,
+    githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
+    githubCallbackUrl: process.env.GITHUB_CB_URL,
+    clientUrl: process.env.CLIENT_URL,
+  },
+  
   upload: {
-    dir: process.env.APP_UPLOAD_DIR || path.join(process.cwd(), 'files'),
+    dir: process.env.APP_UPLOAD_DIR,
   },
   db: {
     host: process.env.POSTGRES_HOST || 'localhost',
     port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
-    user: process.env.POSTGRES_USER || 'mvp_user',
-    pass: process.env.POSTGRES_PASSWORD || 'mvp_pass',
-    name: process.env.POSTGRES_DB || 'sa',
+    user: process.env.POSTGRES_USER || 'postgres',
+    pass: process.env.POSTGRES_PASSWORD || 'postgres',
+    name: process.env.POSTGRES_DB || 'postgres',
   },
 
   log: {
-    token: process.env.LOG_TOKEN || 'abc',
-    dir: process.env.APP_LOGS_DIR || path.join(process.cwd(), 'logs'),
+    token: process.env.LOG_TOKEN,
+    dir: process.env.APP_LOGS_DIR,
   },
 
   redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT, 10),
   },
-}
+})
 
-export default () => config
+export default config
 
 export const connectionSource = new DataSource({
   type: 'postgres',
-  host: config.db.host,
-  port: config.db.port,
-  username: config.db.user,
-  password: config.db.pass,
-  database: config.db.name,
+  host: config().db.host,
+  port: config().db.port,
+  username: config().db.user,
+  password: config().db.pass,
+  database: config().db.name,
   migrations: [path.join(__dirname, 'db', 'migration', '**', '*.js')],
 })
