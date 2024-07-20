@@ -1,10 +1,7 @@
 import { CryptoHelper, WorkoutParseHelper } from '@/common/helpers'
 import { CustomError } from '@/custom-error'
-import {
-  WorkoutRepository,
-  SessionRepository,
-} from '@/db/repository'
-import { Injectable } from '@nestjs/common';
+import { SessionRepository, WorkoutRepository } from '@/db/repository'
+import { Inject, Injectable } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import { ChartsDataService } from '@/microservice/charts-data/charts-data.service'
 import { PolylineService } from '@/microservice/polyline/polyline.service'
@@ -16,10 +13,13 @@ import * as fs from 'node:fs'
 import { ConfigService } from '@nestjs/config'
 import { join } from 'path'
 import { sports } from '@/common/constants'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Cache } from 'cache-manager'
 
 @Injectable()
 export class WorkoutsService {
   constructor(
+    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
     private readonly workoutRepository: WorkoutRepository,
     private readonly sessionRepository: SessionRepository,
     private readonly chartDataService: ChartsDataService,
@@ -27,10 +27,9 @@ export class WorkoutsService {
     private readonly powerCurveService: PowerCurveService,
     private readonly dataSource: DataSource,
     private readonly configService: ConfigService,
-
   ) {}
-  
-  public async getOne(uuid: string, userUuid: string) {
+
+  public async getOneWithRelations(uuid: string, userUuid: string) {
     return this.workoutRepository.findOne({
       where: { uuid, user_uuid: userUuid },
       relations: {
@@ -41,13 +40,9 @@ export class WorkoutsService {
       },
     })
   }
-  
+
   public async findOne(uuid: string, userUuid: string) {
     return this.workoutRepository.findOne({ where: { uuid,  user_uuid: userUuid } })
-  }
-  
-  public async findByUuid(uuid: string, userUuid: string) {
-    return await this.workoutRepository.findByUuid(uuid, userUuid)
   }
 
   public async getCountByUserUuid(uuid: string) {
@@ -66,14 +61,14 @@ export class WorkoutsService {
       dto.name,
     )
   }
-  
+
   public async getSportsDatesAndCount(userUuid: string, withDates = true) {
     if(withDates){
       return this.workoutRepository.getSportsDatesAndCount(userUuid)
     }
     return this.workoutRepository.getSports(userUuid)
   }
-  
+
   public async getTableStats(
   sport: (typeof sports)[number] | null,
   start: string,
@@ -82,8 +77,8 @@ export class WorkoutsService {
 ){
     return this.workoutRepository.getTableStats(sport, start, end, userUuid)
   }
-  
-  
+
+
   public async getChartStats(
     sport: (typeof sports)[number] | null,
     start: string,
@@ -91,10 +86,6 @@ export class WorkoutsService {
     userUuid: string,
   ) {
     return this.workoutRepository.getChartStats(sport, start, end, userUuid)
-  }
-  
-  public async getWorkoutsCount(userUuid: string) {
-    return this.workoutRepository.getWorkoutsCount(userUuid)
   }
 
   public async uploadFile(file: Express.Multer.File, user_uuid: string) {
@@ -150,10 +141,10 @@ export class WorkoutsService {
             width: 3,
           }
           map.addLine(polyline)
-
-          await fs.promises.mkdir(this.configService.get('upload.dir'), { recursive: true })
+          await fs.promises.mkdir(this.uploadDir(), { recursive: true })
           const mediaUuid = crypto.randomUUID()
-          image = `files/${mediaUuid}.png`
+          const dir = this.uploadDir()
+          image = `${dir}/${mediaUuid}.png`
           newWorkout.map = `${mediaUuid}.png`
           await map.render()
           await map.image.save(image)
@@ -221,11 +212,22 @@ export class WorkoutsService {
     return result
   }
 
+  public async removeFromCache(pattern: string){
+    const keys = await this.cacheService.store.keys(pattern)
+    for (const key of keys) {
+      await this.cacheService.del(key)
+    }
+  }
+
   private removeMapImage(uuid: string) {
     if(uuid){
-      const path = join(this.configService.get('upload.dir'), `${uuid}`)
+      const path = join(this.uploadDir(), `${uuid}`)
       fs.unlink(path,() => {})
     }
+  }
+
+  private uploadDir(){
+    return this.configService.get('upload.dir')
   }
 
 }

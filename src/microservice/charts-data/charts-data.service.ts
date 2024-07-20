@@ -1,5 +1,5 @@
 import { ConvertValueHelper } from '@/common/helpers'
-import { ChartPoint, WorkoutRecord, Session } from '@/common/types'
+import { ChartPoint, Session, WorkoutRecord } from '@/common/types'
 import { CustomError } from '@/custom-error'
 import { ChartDataRepository } from '@/db/repository'
 import { Injectable } from '@nestjs/common'
@@ -7,7 +7,7 @@ import { Injectable } from '@nestjs/common'
 @Injectable()
 export class ChartsDataService {
   constructor(private readonly chartPointRepository: ChartDataRepository) {}
-  
+
   public create(points: ChartPoint[], origLength: number, workoutUuid: string) {
     return this.chartPointRepository.create({
       points: JSON.stringify(points),
@@ -16,7 +16,7 @@ export class ChartsDataService {
       workout_uuid: workoutUuid,
     })
   }
-  
+
   public makeChartsData(
     records: WorkoutRecord[],
     session: Session,

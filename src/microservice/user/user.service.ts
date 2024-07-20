@@ -1,11 +1,11 @@
 import { CustomError } from '@/custom-error'
-import { UserModel } from '@/db/model';
+import { UserModel } from '@/db/model'
 import { UserRepository } from '@/db/repository'
 import { Injectable } from '@nestjs/common'
 import { omit } from 'lodash'
-import { AuthUserDto, ChangePasswordDto } from '@/microservice/auth/dto';
-import { PROVIDER_TYPE, PublicUser, UserFromSocialMedia } from '@/common/types';
-import { CryptoHelper } from '@/common/helpers';
+import { AuthUserDto, ChangePasswordDto } from '@/microservice/auth/dto'
+import { PROVIDER_TYPE, PublicUser, ROLE_TYPE, UserFromSocialMedia } from '@/common/types'
+import { CryptoHelper } from '@/common/helpers'
 
 @Injectable()
 export class UserService {
@@ -18,7 +18,7 @@ export class UserService {
     }
     throw new CustomError(400, 'Пользователь не найден')
   }
-  
+
   async findByUuid(uuid: string): Promise<UserModel | null> {
     return this.userRepository.findByUuid(uuid)
   }
@@ -31,37 +31,39 @@ export class UserService {
     return
   }
 
-  async findByEmail(email: string): Promise<UserModel | null> {
-    return this.userRepository.findOne({ where: { email } })
+  async findByEmail(email: string, provider: PROVIDER_TYPE): Promise<UserModel | null> {
+    return this.userRepository.findOne({ where: { email, provider } })
   }
-  
+
   async findByProvider(provider: PROVIDER_TYPE, provider_id: string): Promise<UserModel | null> {
     return this.userRepository.findOne({ where: { provider, provider_id } })
   }
 
   async createWithPassword(dto: AuthUserDto): Promise<UserModel | null> {
     const user = await this.userRepository.save({
-      ...dto, userName: dto.email, login: dto.email, provider: PROVIDER_TYPE.EMAIL
+      ...dto, userName: dto.email, login: dto.email, provider: PROVIDER_TYPE.EMAIL, role: ROLE_TYPE.PRIVATE,
     })
     return this.userRepository.findByUuid(user.uuid)
   }
-  
+
   public async changePassword(dto: ChangePasswordDto, user: UserModel){
-    const passwordEquals = CryptoHelper.compareHashedPasswords(
-      dto.current,
-      user.password,
-    )
-    if(!passwordEquals){
-      throw new CustomError(404, 'Wrong current password')
+    if(dto.current){
+      const passwordEquals = CryptoHelper.compareHashedPasswords(
+        dto.current,
+        user.password,
+      )
+      if(!passwordEquals){
+        throw new CustomError(404, 'Wrong current password')
+      }
     }
     user.password = CryptoHelper.hashPassword(dto.new, 10)
     await this.update(user)
     return true
   }
-  
-  
+
+
   public async validateUser(dto: AuthUserDto) {
-    const user = await this.findByEmail(dto.email.toLowerCase())
+    const user = await this.findByEmail(dto.email.toLowerCase(), PROVIDER_TYPE.EMAIL)
     if (user?.password) {
       const passwordEquals = CryptoHelper.compareHashedPasswords(
         dto.password,
@@ -73,9 +75,9 @@ export class UserService {
     }
     throw new CustomError(401, 'Wrong email or password')
   }
-  
+
   async createWithOAuth(profile: UserFromSocialMedia): Promise<UserModel | null> {
-    const user = await this.userRepository.save(profile)
+    const user = await this.userRepository.save({ ...profile, role: ROLE_TYPE.PRIVATE })
     return this.userRepository.findByUuid(user.uuid)
   }
 
@@ -86,9 +88,9 @@ export class UserService {
   public getPublicUser(user: UserModel): PublicUser {
     return omit(user, ['uuid', 'password', 'created_at', 'updated_at', 'provider_id'])
   }
-  
+
   async remove(user: UserModel) {
     return this.userRepository.removeOne(user)
   }
-  
+
 }

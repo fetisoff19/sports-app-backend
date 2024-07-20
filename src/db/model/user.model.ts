@@ -1,22 +1,22 @@
 import { Column, Entity, OneToMany } from 'typeorm'
 import { DefaultFields } from '@/db/model/_default'
 import { WorkoutModel } from '@/db/model/workout.model'
-import { PROVIDER_TYPE } from '@/common/types';
+import { PROVIDER_TYPE, ROLE_TYPE } from '@/common/types'
 
 @Entity('user')
 export class UserModel extends DefaultFields {
   @Column({ type: 'text', name: 'login' })
   login: string
-  
+
   @Column({ name: 'provider',
     type: 'enum',
     enum: PROVIDER_TYPE,
   })
   provider: PROVIDER_TYPE
-  
+
   @Column({ type: 'text', name: 'provider_id', nullable: true })
   provider_id: string | null
-  
+
   @Column({ type: 'text', name: 'email', nullable: true })
   email: string | null
 
@@ -28,4 +28,11 @@ export class UserModel extends DefaultFields {
 
   @OneToMany(() => WorkoutModel, (model) => model.user)
   workouts: WorkoutModel[]
+
+  @Column({
+    type: 'enum',
+    name: 'role',
+    enum: ROLE_TYPE,
+  })
+  role: ROLE_TYPE
 }

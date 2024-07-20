@@ -2,18 +2,7 @@ import { DefaultDto } from 'src/common/dto'
 import { UserModel } from '@/db/model'
 
 import { InjectQueue } from '@nestjs/bull'
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Patch,
-  Post,
-  Query,
-  Res,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post, Query, Res, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { Queue } from 'bull'
 import { User } from 'src/decorators'
 import { WorkoutsService } from '@/microservice/workout/workout.service'
@@ -22,8 +11,8 @@ import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { FileTypeValidationPipe } from '@/pipes'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { CustomError } from '@/custom-error'
-import * as _ from 'lodash';
-import { Response } from 'express';
+import * as _ from 'lodash'
+import { Response } from 'express'
 
 @Controller('workout')
 @ApiTags('workout')
@@ -37,18 +26,18 @@ export class WorkoutsController {
   async getOne(@Query() dto: DefaultDto, @User() user: UserModel, @Res() res: Response) {
     try {
       const job = await this.workoutQueue.add('one', { dto, user })
-      const result = await job.finished();
+      const result = await job.finished()
       if (!result) {
         throw new CustomError(404, 'Workout not found')
       }
       return res.status(200)
         .header('Content-Type', 'application/json')
-        .send(result);
+        .send(result)
     } catch (e) {
       return res
         .status(_.get(e, 'status', 500))
         .header('Content-Type', 'application/json')
-        .send({ message: _.get(e, 'message', 'Internal server error') });
+        .send({ message: _.get(e, 'message', 'Internal server error') })
     }
   }
 
@@ -56,13 +45,13 @@ export class WorkoutsController {
   async getWithPagination(@Query() dto: PaginationDto, @User() user: UserModel, @Res() res: Response) {
     try{
       const job = await this.workoutQueue.add('some', { dto, user })
-      const result = await job.finished();
+      const result = await job.finished()
       if (!result) {
         throw new CustomError(404, 'Workouts not found')
       }
       return res.status(200)
         .header('Content-Type', 'application/json')
-        .send(result);
+        .send(result)
     } catch (e: unknown) {
       return res
         .status(_.get(e, 'status', 500))
@@ -87,25 +76,29 @@ export class WorkoutsController {
   })
   async uploadFile(
     @UploadedFile(new FileTypeValidationPipe(['fit'], 5)) file: Express.Multer.File, @User() user: UserModel ) {
-    return this.workoutsService.uploadFile(file, user.uuid)
+    const result = await this.workoutsService.uploadFile(file, user.uuid)
+    if(result){
+      await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
+    }
+    return result
   }
 
   @Patch()
   async rename( @Body() dto: RenameDto, @User() user: UserModel, @Res() res: Response){
     try {
       const job = await this.workoutQueue.add('rename', { dto, user })
-      const result = await job.finished();
+      const result = await job.finished()
       if (!result) {
         throw new CustomError(404, 'Workout not found')
       }
       return res.status(200)
         .header('Content-Type', 'application/json')
-        .send(result);
+        .send(result)
     } catch (e: unknown) {
       return res
         .status(_.get(e, 'status', 500))
         .header('Content-Type', 'application/json')
-        .send({ message: _.get(e, 'message', 'Internal server error') });
+        .send({ message: _.get(e, 'message', 'Internal server error') })
     }
   }
 
@@ -114,18 +107,18 @@ export class WorkoutsController {
   async removeOne(@Body() dto: DefaultDto, @User() user: UserModel, @Res() res: Response) {
     try {
       const job = await this.workoutQueue.add('remove', { dto, user  })
-      const result = await job.finished();
+      const result = await job.finished()
       if (!result) {
         throw new CustomError(404, 'Workout not found')
       }
       return res.status(200)
         .header('Content-Type', 'application/json')
-        .send(result);
+        .send(result)
     } catch(e: unknown){
       return res
         .status(_.get(e, 'status', 500))
         .header('Content-Type', 'application/json')
-        .send({ message: _.get(e, 'message', 'Internal server error') });
+        .send({ message: _.get(e, 'message', 'Internal server error') })
     }
   }
 
@@ -133,18 +126,18 @@ export class WorkoutsController {
   async removeAll(@User() user: UserModel, @Res() res: Response) {
     try {
       const job = await this.workoutQueue.add('remove-all', { user })
-      const result = await job.finished();
+      const result = await job.finished()
       if (!result) {
         throw new CustomError(404, 'Workout not found')
       }
       return res.status(200)
         .header('Content-Type', 'application/json')
-        .send(result);
+        .send(result)
     } catch(e: unknown){
       return res
         .status(_.get(e, 'status', 500))
         .header('Content-Type', 'application/json')
-        .send({ message: _.get(e, 'message', 'Internal server error') });
+        .send({ message: _.get(e, 'message', 'Internal server error') })
     }
   }
 

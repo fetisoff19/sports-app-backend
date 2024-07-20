@@ -1,6 +1,6 @@
 import { UserModel } from '@/db/model'
 import { UserRepository } from '@/db/repository'
-import {  Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { UserController } from './user.controller'

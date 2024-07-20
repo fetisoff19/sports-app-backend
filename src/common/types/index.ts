@@ -15,7 +15,7 @@ export * from './table-stats'
 export * from './chart-stats'
 export * from './google-profile'
 export * from './user-from-social-media'
-export * from './provider-type.enum'
+export * from './user-types.enum'
 
 
 

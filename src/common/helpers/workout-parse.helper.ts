@@ -1,10 +1,10 @@
 import { deviceInfoKeys, recordMesgsKeys, sports } from '@/common/constants'
 import { ConvertValueHelper } from '@/common/helpers/convert-value.helper'
-import { DeviseInfo, Info, Session } from '@/common/types'
-import { WorkoutRecord } from '@/common/types'
+import { DeviseInfo, Info, Session, WorkoutRecord } from '@/common/types'
 import { CustomError } from '@/custom-error'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { pick } from 'lodash'
+
 // import { Decoder, Stream } from '@garmin/fitsdk'
 
 export class WorkoutParseHelper {
@@ -81,9 +81,9 @@ export class WorkoutParseHelper {
       end_time: new Date(session.timestamp),
       total_timer_time: session.totalTimerTime,
       total_elapsed_time: session.totalElapsedTime,
-      
+
       total_distance: ConvertValueHelper.convertDistance(session?.totalDistance),
-      
+
       avg_speed: session?.totalDistance > 1 ? ConvertValueHelper.convertSpeed(
         session?.avgSpeed,
         cadence_coef,
@@ -100,31 +100,31 @@ export class WorkoutParseHelper {
         session?.enhancedMaxSpeed || session?.maxSpeed,
         cadence_coef,
       ), // km/h or min/km
-      
+
       avg_heart_rate: Math.round(session?.avgHeartRate),
       min_heart_rate: Math.round(session?.minHeartRate),
       max_heart_rate: Math.round(session?.maxHeartRate),
-      
+
       avg_cadence: Math.round(session?.avgCadence * cadence_coef),
       max_cadence: Math.round(session?.maxCadence * cadence_coef),
-      
+
       avg_power: Math.round(session?.avgPower),
       max_power: Math.round(session?.maxPower),
       normalized_power: Math.round(session?.normalizedPower),
-      
+
       total_ascent: Math.round(session?.totalAscent),
       total_descent: Math.round(session?.totalDescent),
       max_altitude: Math.round(session?.maxAltitude),
       avg_altitude: Math.round(session?.avgAltitude),
       min_altitude: Math.round(session?.minAltitude),
-      
+
       max_temperature: Math.round(session?.maxTemperature),
       avg_temperature: Math.round(session?.avgTemperature),
-      
+
       total_strides: Math.round(session?.totalCycles),
       training_stress_score: Math.round(session?.trainingStressScore),
       total_calories: Math.round(session?.totalCalories),
-      
+
       cadence_coef,
       time_step,
       smoothing: smoothing,

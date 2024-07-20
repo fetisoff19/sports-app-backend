@@ -8,5 +8,5 @@ export const sortParams = [
   'hr',
   'power',
   'cadence',
-  'enhanced_speed'
+  'enhanced_speed',
 ] as const

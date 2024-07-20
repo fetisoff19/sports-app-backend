@@ -17,7 +17,7 @@ const config = () => ({
     githubCallbackUrl: process.env.GITHUB_CB_URL,
     clientUrl: process.env.CLIENT_URL,
   },
-  
+
   upload: {
     dir: process.env.APP_UPLOAD_DIR,
   },
@@ -28,7 +28,11 @@ const config = () => ({
     pass: process.env.POSTGRES_PASSWORD || 'postgres',
     name: process.env.POSTGRES_DB || 'postgres',
   },
-
+  mailer: {
+    host: process.env.EMAIL_HOST,
+    username: process.env.EMAIL_USERNAME,
+    password: process.env.EMAIL_PASSWORD,
+  },
   log: {
     token: process.env.LOG_TOKEN,
     dir: process.env.APP_LOGS_DIR,

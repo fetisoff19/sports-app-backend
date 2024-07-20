@@ -46,14 +46,6 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
       .getRawOne()
   }
 
-  async findAllSports(user_uuid: string): Promise<{ sport: string }[]> {
-    return this.getBaseQuery()
-      .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
-      .select('workout.sport AS sport')
-      .groupBy('workout.sport')
-      .getRawMany()
-  }
-  
   async getSportsDatesAndCount(user_uuid: string): Promise<MainStats[]> {
     return this.getBaseQuery()
       .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
@@ -67,7 +59,7 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
       .orderBy('count', 'DESC')
       .getRawMany()
   }
-  
+
   async getSports(user_uuid: string): Promise<Partial<Omit<MainStats, 'sport' | 'count'>>[]> {
     return this.getBaseQuery()
       .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
@@ -79,7 +71,7 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
       .orderBy('count', 'DESC')
       .getRawMany()
   }
-  
+
   async getTableStats(
     sport: (typeof sports)[number] | null,
     start: string,
@@ -92,13 +84,13 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
       .leftJoinAndSelect('workout.session', 'session')
       .select([
         'COUNT(*) as count',
-        
+
         'SUM(session.total_distance) AS total_distance',
         'SUM(session.total_elapsed_time) AS total_elapsed_time',
         'SUM(session.total_timer_time) AS total_timer_time',
         'SUM(session.total_ascent) AS total_ascent',
         'SUM(session.total_calories) AS total_calories',
-        
+
         'AVG(NULLIF(session.total_distance, 0)) AS avg_distance',
         'AVG(NULLIF(session.total_elapsed_time, 0)) AS avg_elapsed_time',
         'AVG(NULLIF(session.total_timer_time, 0)) AS avg_timer_time',
@@ -108,7 +100,7 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
         'AVG(NULLIF(session.avg_cadence, 0)) AS avg_cadence',
         'AVG(NULLIF(session.avg_power, 0)) AS avg_power',
         'AVG(NULLIF(session.total_calories, 0)) AS avg_calories',
-        
+
         'MAX(session.max_heart_rate) AS max_heart_rate',
       ])
     if(sport) {
@@ -119,7 +111,7 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
     return query
       .getRawOne()
   }
-  
+
   async getChartStats(
     sport: (typeof sports)[number] | null,
     start: string,
@@ -140,16 +132,16 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
         'session.total_timer_time AS total_timer_time',
         'session.total_ascent AS total_ascent',
         'session.total_calories AS total_calories',
-        
+
         'session.avg_speed AS avg_speed',
         'session.enhanced_avg_speed AS enhanced_speed',
         'session.avg_heart_rate AS avg_heart_rate',
         'session.avg_cadence AS avg_cadence',
         'session.avg_power AS avg_power',
-        
+
         'session.max_heart_rate AS max_heart_rate',
         'session.cadence_coef AS cadence_coef',
-      
+
       ])
     if(sport) {
       return query
@@ -167,7 +159,7 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
       .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
       .getCount()
   }
-  
+
   async findByUserUuidAndSha256(
     user_uuid: string,
     sha256: string,

@@ -1,12 +1,6 @@
 import { sort, sortParams, sports } from '@/common/constants'
 import { Type } from 'class-transformer'
-import {
-  IsIn,
-  IsInt,
-  IsPositive,
-  IsString,
-  Min,
-} from 'class-validator'
+import { IsIn, IsInt, IsPositive, IsString, Min } from 'class-validator'
 
 export class PaginationDto {
   @IsString()
@@ -29,7 +23,7 @@ export class PaginationDto {
 
   @IsString()
   @IsIn(sports)
-  sport: (typeof sports)[number]
+  sport: (typeof sports)[number] | null
 
   @IsString()
   name: string

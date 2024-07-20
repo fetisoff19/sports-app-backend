@@ -1,8 +1,8 @@
-FROM node:21-alpi
+FROM node:lts-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY ./package.json ./package.json
 
 RUN npm i -g pnpm
 

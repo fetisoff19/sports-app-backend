@@ -19,7 +19,7 @@ export class PowerCurveRepository extends Repository<PowerCurveModel> {
       .andWhere('pc.workout_uuid = :uuid', { uuid })
       .getOne()
   }
-  
+
   async getForPeriod(
     start: string,
     end: string,

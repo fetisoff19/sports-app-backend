@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-google-oauth2';
-import { ConfigService } from '@nestjs/config';
-import { GoogleProfile, PROVIDER_TYPE, UserFromSocialMedia } from '@/common/types';
+import { Injectable } from '@nestjs/common'
+import { PassportStrategy } from '@nestjs/passport'
+import { Strategy, VerifyCallback } from 'passport-google-oauth2'
+import { ConfigService } from '@nestjs/config'
+import { GoogleProfile, PROVIDER_TYPE, UserFromSocialMedia } from '@/common/types'
 
 
 @Injectable()
@@ -13,7 +13,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientSecret: configService.get<string>('auth.googleClientSecret'),
       callbackURL: configService.get<string>('auth.googleCallbackUrl'),
       scope: ['profile', 'email'],
-    });
+    })
   }
   
   async validate(
@@ -22,7 +22,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: GoogleProfile,
     done: VerifyCallback,
   ) {
-    const { id, name, email, photos } = profile;
+    const { id, name, email, photos } = profile
     const login = name.givenName && name.familyName ? `${name.givenName} ${name.familyName}`
       : name.givenName ? name.givenName : email
     const user: UserFromSocialMedia = {
@@ -31,8 +31,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       email,
       login,
       image: photos[0].value,
-    };
+    }
     
-    done(null, user);
+    done(null, user)
   }
 }

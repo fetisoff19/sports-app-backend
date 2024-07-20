@@ -6,7 +6,7 @@ import { CustomValidationPipe } from '@/pipes'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 import * as fs from 'node:fs'
-import { join } from 'path';
+import { join } from 'path'
 
 
 async function bootstrap() {
@@ -32,7 +32,6 @@ async function bootstrap() {
   process.env?.NODE_ENV !== 'prod' && SwaggerModule.setup('api', app, document)
 
   const path = configService.get('log.dir')
-  console.log(join(__dirname, '..', path))
   await fs.promises.mkdir(join(__dirname, '..', path), { recursive: true })
 
   await app.listen(port, '0.0.0.0')

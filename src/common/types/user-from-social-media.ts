@@ -1,4 +1,4 @@
-import { PROVIDER_TYPE } from '@/common/types/provider-type.enum';
+import { PROVIDER_TYPE } from '@/common/types/user-types.enum'
 
 export type UserFromSocialMedia = {
   provider: PROVIDER_TYPE,

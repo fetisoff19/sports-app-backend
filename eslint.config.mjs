@@ -18,13 +18,13 @@ export default [
       '.idea',
       'node_modules',
     ],
-    files: ['*.ts'],
+    // files: ['*.ts'],
     'rules': {
       'no-unused-vars': 'off',
       'quotes': ['error', 'single', {
         'allowTemplateLiterals': true,
       }],
-      'semi': ['error', 'never'],
+      "semi": ["error", "never"],
       'semi-spacing': ['error', {
         'before': false,
         'after': true,

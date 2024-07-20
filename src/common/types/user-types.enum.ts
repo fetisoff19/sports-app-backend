@@ -3,3 +3,9 @@ export enum PROVIDER_TYPE {
   GITHUB = 'github',
   EMAIL = 'email',
 }
+
+export enum ROLE_TYPE {
+  ADMIN = 'admin',
+  PRIVATE = 'private',
+  PUBLIC = 'public',
+}

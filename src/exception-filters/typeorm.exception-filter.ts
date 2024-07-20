@@ -1,11 +1,6 @@
 import { ExceptionResponse } from '@/common/types'
 import { GlobalResponseError } from '@/exception-filters/_global-response-error'
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { ArgumentsHost, Catch, ExceptionFilter, InternalServerErrorException } from '@nestjs/common'
 import { Request, Response } from 'express'
 import { QueryFailedError, TypeORMError } from 'typeorm'
 

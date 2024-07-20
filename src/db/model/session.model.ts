@@ -1,10 +1,5 @@
 import { WorkoutModel } from '@/db/model/workout.model'
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-} from 'typeorm'
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
 import { DefaultFields } from '@/db/model/_default'
 
 @Entity({ name: 'session' })
@@ -20,13 +15,13 @@ export class SessionModel extends DefaultFields {
 
   @Column({ type: 'uuid', name: 'workout_uuid' })
   workout_uuid: string
-  
+
   @Column({ type: 'timestamptz', name: 'start_time' })
   start_time: Date
-  
+
   @Column({ type: 'timestamptz', name: 'end_time' })
   end_time: Date
-  
+
   @Column({ type: 'real', name: 'time_step', default: 1 })
   time_step: number
 

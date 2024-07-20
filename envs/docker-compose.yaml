@@ -6,19 +6,24 @@ services:
     container_name: sports_app_nest
     image: nest-api
     build:
-      dockerfile: Dockerfile
-      context: .
+      context: ../
+      dockerfile: ./Dockerfile
     ports:
       - "3000:3000"
     env_file:
       - .env
-    volumes:
-      - .:/app
+#    volumes:
+#      - .:/app
+    environment:
+      REDIS_HOST: redis
+      UPLOAD_DIR: /var/files
     restart: unless-stopped
+    volumes:
+      - ./tmp/files:/var/files
+      - ./tmp/logs:/var/logs
     depends_on:
       - postgres
       - redis
-
   redis:
     container_name: sports_app_redis
     restart: unless-stopped
@@ -26,7 +31,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - ./redis-data:/data
+      - ./tmp/redis-data:/data
 
   postgres:
     container_name: sports_app_postgres
@@ -37,7 +42,7 @@ services:
       - .env
     restart: unless-stopped
     volumes:
-      - ./db-data:/data/postgres
+      - ./tmp/db-data:/data/postgres
 
   uploads:
 
@@ -53,4 +58,4 @@ services:
       - 0.0.0.0:3001:80
     volumes:
       - ./uploads.nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./files:/var/files
+      - ./tmp/files:/var/files

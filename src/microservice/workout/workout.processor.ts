@@ -2,10 +2,19 @@ import { OnQueueError, OnQueueStalled, Process, Processor } from '@nestjs/bull'
 import { Job } from 'bull'
 import * as _ from 'lodash'
 import { WorkoutsService } from '@/microservice/workout/workout.service'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Cache } from 'cache-manager'
+import { Inject } from '@nestjs/common'
+import { WorkoutModel } from '@/db/model'
+import { WorkoutMainInfo } from '@/common/types'
+import { PaginationDto } from '@/microservice/workout/dto'
 
 @Processor('workout')
 export class WorkoutProcessor {
-  constructor(private readonly workoutsService: WorkoutsService) {}
+  constructor(
+    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
+    private readonly workoutsService: WorkoutsService,
+  ) {}
 
   @OnQueueStalled()
   @OnQueueError()
@@ -20,12 +29,27 @@ export class WorkoutProcessor {
   @Process('some')
   async getWithPagination(job: Job) {
     try {
-      const dto = _.get(job, 'data.dto')
-      const uuid = _.get(job, 'data.user.uuid')
-      const result = await this.workoutsService.getWithPagination(uuid, dto)
+      const dto: PaginationDto = _.get(job, 'data.dto')
+      const user = _.get(job, 'data.user')
+      const key = `
+        user:${user.uuid}.
+        pagination.
+        limit:${dto.limit}.
+        offset:${dto.offset}.
+        direction:${dto.direction}
+        param:${dto.param}
+        sport:${dto.sport}
+        name:${dto.name}
+        `
+      let result = await this.cacheService.get<WorkoutMainInfo[] | undefined>(key)
+      if(result){
+        return result
+      }
+      result = await this.workoutsService.getWithPagination(user.uuid, dto)
       if(!result){
         return
       }
+      await this.cacheService.set(key, result, 3600 * 1000)
       return result
     } catch (e: unknown) {
       console.error(e)
@@ -37,10 +61,15 @@ export class WorkoutProcessor {
     try {
       const dto = _.get(job, 'data.dto')
       const user = _.get(job, 'data.user')
-      const workout = await this.workoutsService.getOne(dto.uuid, user.uuid)
+      let workout = await this.cacheService.get<WorkoutModel | undefined>(`user:${user.uuid}.workout:${dto.uuid}`)
+      if(workout){
+        return workout
+      }
+      workout = await this.workoutsService.getOneWithRelations(dto.uuid, user.uuid)
       if(!workout){
         return
       }
+      await this.cacheService.set(`user:${user.uuid}.workout:${workout.uuid}`, workout, 3600 * 1000)
       return workout
     } catch (e: unknown) {
       console.error(e)
@@ -64,12 +93,15 @@ export class WorkoutProcessor {
         workout.note = dto.note
         await this.workoutsService.save(workout)
       }
+      await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
+      await this.cacheService.del(`user:${user.uuid}.workout:${workout.uuid}`)
+
       return this.workoutsService.findOne(dto.uuid, user.uuid)
     } catch (e: unknown) {
       console.error(e)
     }
   }
-  
+
   @Process('remove')
   async removeOne(job: Job) {
     try {
@@ -79,6 +111,8 @@ export class WorkoutProcessor {
       if(!workout){
         return
       }
+      await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
+      await this.cacheService.del(`user:${user.uuid}.workout:${workout.uuid}`)
       return this.workoutsService.removeOne(workout)
     } catch (e: unknown) {
       console.error(e)
@@ -93,9 +127,12 @@ export class WorkoutProcessor {
       if(!result){
         return
       }
+      await this.workoutsService.removeFromCache(`user:${user.uuid}*`)
       return result
     } catch (e: unknown) {
       console.error(e)
     }
   }
+
+
 }

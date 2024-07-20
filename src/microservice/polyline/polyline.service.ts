@@ -14,7 +14,7 @@ export class PolylineService {
       workout_uuid: workoutUuid,
     })
   }
-  
+
   public getPoints(records: WorkoutRecord[], smoothing: number) {
     const points: [number, number][] = []
     if (Object.hasOwn(records.at(0), 'positionLat') ||
