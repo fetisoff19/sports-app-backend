@@ -5,16 +5,11 @@ import { CustomError } from '@/custom-error'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { pick } from 'lodash'
 
-// import { Decoder, Stream } from '@garmin/fitsdk'
+import { Decoder, Stream } from '@garmin/fitsdk'
 
 export class WorkoutParseHelper {
   static async parseFit(file: Express.Multer.File) {
     try {
-      // // bad solution, but it's the only way
-      const Stream = (await eval(`import('@garmin/fitsdk/src/stream.js')`))
-        .default
-      const Decoder = (await eval(`import('@garmin/fitsdk/src/decoder.js')`))
-        .default
       const streamFromBuffer = Stream.fromBuffer(file?.buffer)
       const decoder = new Decoder(streamFromBuffer)
       const { messages } = decoder.read()
@@ -70,7 +65,7 @@ export class WorkoutParseHelper {
 
   private static getSessionData(session: Record<string, any>, recordsLength: number) {
     const result = {}
-    const cadence_coef: number = this.getCadenceCoef(session?.sport || 'other')
+    const cadence_coef = this.getCadenceCoef(session?.sport || 'other')
     const time_step: number =
       Number(
         ((session?.totalTimerTime || recordsLength) / recordsLength).toFixed(1),
@@ -174,13 +169,8 @@ export class WorkoutParseHelper {
     return fileName.split('.').slice(0, -1).join('')
   }
 
-  private static getCadenceCoef(sport: (typeof sports)[number]): number {
-    if (
-      sport === 'running' ||
-      sport === 'training' ||
-      sport === 'walking' ||
-      sport === 'hiking'
-    ) {
+  private static getCadenceCoef(sport: (typeof sports)[number]): Session['cadence_coef'] {
+    if (['running', 'training', 'walking', 'hiking'].includes(sport)) {
       return 2
     }
     return 1

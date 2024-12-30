@@ -19,6 +19,8 @@ import { JwtGuard } from '@/guards'
 import { CacheModule } from '@nestjs/cache-manager'
 import { RedisClientOptions } from 'redis'
 import { redisStore } from 'cache-manager-redis-yet'
+import { pinoConfig } from '@/common/helpers'
+import { LoggerModule } from 'nestjs-pino'
 
 
 @Module({
@@ -31,17 +33,17 @@ import { redisStore } from 'cache-manager-redis-yet'
       isGlobal: true,
       load: [config],
     }),
-    // LoggerModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: async (configService: ConfigService) => {
-    //     const dir = configService.get('log.dir')
-    //     const token = configService.get<string>('log.token')
-    //     return ({
-    //       pinoHttp: pinoConfig(token, dir),
-    //     });
-    //   }
-    // }),
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const dir = configService.get('log.dir')
+        const token = configService.get<string>('log.token')
+        return ({
+          pinoHttp: pinoConfig(token, dir),
+        })
+      },
+    }),
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

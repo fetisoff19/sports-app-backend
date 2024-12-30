@@ -112,8 +112,8 @@ importers:
         specifier: ^7.12.0
         version: 7.13.0(eslint@9.4.0)(typescript@5.3.3)
       axios:
-        specifier: ^1.7.2
-        version: 1.7.2
+        specifier: 1.7.4
+        version: 1.7.4
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
@@ -1548,8 +1548,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@1.7.2:
-    resolution: {integrity: sha512-2A8QhOMrbomlDuiLeK9XibIBzuHeRcqqNOHp0Cyp5EoJ1IFDh+XZH3A6BkXtv0K4gFGCI0Y4BM7B1wOEi0Rmgw==}
+  axios@1.7.4:
+    resolution: {integrity: sha512-DukmaFRnY6AzAALSH4J2M3k6PkaC+MfaAGdEERRWcC9q3/TWQwLpHR8ZRLKTdQ3aBDL64EdluRDjJqKw+BPZEw==}
 
   babel-jest@29.7.0:
     resolution: {integrity: sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg==}
@@ -6469,7 +6469,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.0.0
 
-  axios@1.7.2:
+  axios@1.7.4:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
