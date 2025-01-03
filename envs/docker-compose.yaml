@@ -20,7 +20,7 @@ services:
     image: nest-api
     tty: true
     deploy:
-      replicas: 3
+      replicas: 1
     build:
       context: ../
       dockerfile: ./Dockerfile

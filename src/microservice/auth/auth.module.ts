@@ -34,8 +34,8 @@ import { MailerModule } from '@nestjs-modules/mailer'
         return ({
           transport: {
             host: configService.get<string>('mailer.host'),
-            secure: true,
-            port: 465,
+            secure: false, // true with ssl
+            // port: 465,
             auth: {
               user: configService.get<string>('mailer.username'),
               pass: configService.get<string>('mailer.password'),

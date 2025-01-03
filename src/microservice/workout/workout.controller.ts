@@ -76,11 +76,12 @@ export class WorkoutsController {
   })
   async uploadFile(
     @UploadedFile(new FileTypeValidationPipe(['fit'], 5)) file: Express.Multer.File, @User() user: UserModel ) {
-    const result = await this.workoutsService.uploadFile(file, user.uuid)
-    if(result){
-      await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
-    }
-    return result
+    return this.workoutsService.uploadFile(file, user.uuid)
+    // const result = await this.workoutsService.uploadFile(file, user.uuid)
+    // if(result){
+    //   await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
+    // }
+    // return result
   }
 
   @Patch()
