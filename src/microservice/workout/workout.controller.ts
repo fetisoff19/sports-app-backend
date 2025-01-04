@@ -101,11 +101,6 @@ export class WorkoutsController {
     @User() user: UserModel,
   ) {
     return this.workoutsService.uploadFile(file, user.uuid)
-    // const result = await this.workoutsService.uploadFile(file, user.uuid)
-    // if(result){
-    //   await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
-    // }
-    // return result
   }
 
   @Patch()

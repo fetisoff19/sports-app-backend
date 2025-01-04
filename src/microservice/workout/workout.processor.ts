@@ -32,26 +32,6 @@ export class WorkoutProcessor {
       const dto: PaginationDto = _.get(job, 'data.dto')
       const user = _.get(job, 'data.user')
       return this.workoutsService.getWithPagination(user.uuid, dto)
-      // const key = `
-      //   user:${user.uuid}.
-      //   pagination.
-      //   limit:${dto.limit}.
-      //   offset:${dto.offset}.
-      //   direction:${dto.direction}
-      //   param:${dto.param}
-      //   sport:${dto.sport}
-      //   name:${dto.name}
-      //   `
-      // let result = await this.cacheService.get<WorkoutMainInfo[] | undefined>(key)
-      // if(result){
-      //   return result
-      // }
-      // const result = await this.workoutsService.getWithPagination(user.uuid, dto)
-      // if(!result){
-      //   return
-      // }
-      // await this.cacheService.set(key, result, 3600 * 1000)
-      // return result
     } catch (e: unknown) {
       console.error(e)
     }
@@ -103,7 +83,6 @@ export class WorkoutProcessor {
         workout.note = dto.note
         await this.workoutsService.save(workout)
       }
-      // await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
       await this.cacheService.del(`user:${user.uuid}.workout:${workout.uuid}`)
 
       return this.workoutsService.findOne(dto.uuid, user.uuid)
@@ -121,7 +100,6 @@ export class WorkoutProcessor {
       if (!workout) {
         return
       }
-      // await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
       await this.cacheService.del(`user:${user.uuid}.workout:${workout.uuid}`)
       return this.workoutsService.removeOne(workout)
     } catch (e: unknown) {
@@ -137,7 +115,6 @@ export class WorkoutProcessor {
       if (!result) {
         return
       }
-      // await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
       await this.workoutsService.removeFromCache(`user:${user.uuid}*`)
       return result
     } catch (e: unknown) {

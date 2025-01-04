@@ -15,9 +15,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   })
-
   app.enableCors({
     exposedHeaders: 'Authorization',
+    origin: [
+      process.env.CLIENT_URL,
+    ],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    credentials: false,
   })
 
   const configService = app.get<ConfigService>(ConfigService)
