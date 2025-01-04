@@ -4,12 +4,9 @@ import { DefaultFields } from '@/db/model/_default'
 
 @Entity({ name: 'session' })
 export class SessionModel extends DefaultFields {
-
-  @OneToOne(
-    () => WorkoutModel,
-    (model) => model.session,
-    { cascade: ['remove'] },
-  )
+  @OneToOne(() => WorkoutModel, (model) => model.session, {
+    cascade: ['remove'],
+  })
   @JoinColumn({ name: 'workout_uuid' })
   workout: WorkoutModel
 
@@ -105,5 +102,4 @@ export class SessionModel extends DefaultFields {
 
   @Column({ type: 'real', name: 'training_stress_score', nullable: true })
   training_stress_score: number | null
-
 }

@@ -4,7 +4,3 @@ export * from './chart-data.repository'
 export * from './session.repository'
 export * from './polyline.repository'
 export * from './power-curve.repository'
-
-
-
-

@@ -14,10 +14,14 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
       scope: ['public_profile', 'email'],
     })
   }
-  
-  async validate(_accessToken: string, _refreshToken: string, profile: Profile) {
-    const { id,  username, photos } = profile
-    
+
+  async validate(
+    _accessToken: string,
+    _refreshToken: string,
+    profile: Profile,
+  ) {
+    const { id, username, photos } = profile
+
     const user: UserFromSocialMedia = {
       provider: PROVIDER_TYPE.GITHUB,
       provider_id: id,

@@ -1,7 +1,6 @@
 import { CustomError } from '@/custom-error'
 import { Injectable, PipeTransform } from '@nestjs/common'
 
-
 @Injectable()
 export class FileTypeValidationPipe implements PipeTransform {
   private readonly type: string[]

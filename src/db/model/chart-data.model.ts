@@ -4,15 +4,12 @@ import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
 
 @Entity({ name: 'chart_data' })
 export class ChartDataModel extends DefaultFields {
-
   @Column({ type: 'uuid', name: 'workout_uuid' })
   workout_uuid: string
 
-  @OneToOne(
-    () => WorkoutModel,
-    (model) => model.chartData,
-    { cascade: ['remove'] },
-  )
+  @OneToOne(() => WorkoutModel, (model) => model.chartData, {
+    cascade: ['remove'],
+  })
   @JoinColumn({ name: 'workout_uuid' })
   workout: WorkoutModel
 

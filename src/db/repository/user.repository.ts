@@ -14,9 +14,7 @@ export class UserRepository extends Repository<UserModel> {
   }
 
   async findByUuid(uuid: string): Promise<UserModel | null> {
-    return this.getBaseQuery()
-      .andWhere('user.uuid = :uuid', { uuid })
-      .getOne()
+    return this.getBaseQuery().andWhere('user.uuid = :uuid', { uuid }).getOne()
   }
 
   async findByEmail(email: string): Promise<UserModel | null> {

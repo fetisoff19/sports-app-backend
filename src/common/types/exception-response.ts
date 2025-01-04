@@ -1,4 +1,4 @@
 export type ExceptionResponse = {
-  statusCode: number
-  message: string
-}
+  statusCode: number;
+  message: string;
+};

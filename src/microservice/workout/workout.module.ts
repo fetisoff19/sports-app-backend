@@ -12,23 +12,17 @@ import { ChartsDataModule } from '@/microservice/charts-data/charts-data.module'
 import { WorkoutProcessor } from '@/microservice/workout/workout.processor'
 import { CacheModule } from '@nestjs/cache-manager'
 
-
 @Module({
   imports: [
     ConfigModule,
     PolylineModule,
     PowerCurveModule,
     ChartsDataModule,
-    TypeOrmModule.forFeature([
-      WorkoutModel,
-      SessionModel,
-    ]),
+    TypeOrmModule.forFeature([WorkoutModel, SessionModel]),
     BullModule.registerQueue({ name: 'workout' }),
     CacheModule.register(),
   ],
-  controllers: [
-    WorkoutsController,
-  ],
+  controllers: [WorkoutsController],
   providers: [
     WorkoutsService,
     WorkoutRepository,

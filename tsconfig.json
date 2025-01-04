@@ -1,12 +1,11 @@
-{//    "types": ["reflect-metadata", "node"],
-
+{
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-//    "types": ["reflect-metadata", "node"],
     "allowSyntheticDefaultImports": true,
     "target": "ES2022",
     "sourceMap": true,

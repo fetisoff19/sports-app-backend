@@ -1,5 +1,5 @@
 export interface DeviseInfo {
-  productName?: string
-  manufacturer: string
-  garminProduct?: string
+  productName?: string;
+  manufacturer: string;
+  garminProduct?: string;
 }

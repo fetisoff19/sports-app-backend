@@ -4,7 +4,6 @@ export const deviceInfoKeys = [
   'garminProduct',
 ] as const
 
-
 export const recordMesgsKeys = [
   'timestamp',
   'positionLat',

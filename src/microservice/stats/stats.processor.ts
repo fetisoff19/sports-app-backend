@@ -26,8 +26,11 @@ export class StatsProcessor {
     try {
       const dto = _.get(job, 'data.dto')
       const user = _.get(job, 'data.user')
-      const result = await this.workoutsService.getSportsDatesAndCount(user.uuid, dto.withDates)
-      if(!result){
+      const result = await this.workoutsService.getSportsDatesAndCount(
+        user.uuid,
+        dto.withDates,
+      )
+      if (!result) {
         return
       }
       return result
@@ -41,8 +44,13 @@ export class StatsProcessor {
     try {
       const dto = _.get(job, 'data.dto')
       const user = _.get(job, 'data.user')
-      const result = await this.workoutsService.getTableStats(dto.sport, dto.start, dto.end, user.uuid)
-      if(!result){
+      const result = await this.workoutsService.getTableStats(
+        dto.sport,
+        dto.start,
+        dto.end,
+        user.uuid,
+      )
+      if (!result) {
         return
       }
       return result
@@ -53,11 +61,16 @@ export class StatsProcessor {
 
   @Process('chart')
   async getChartStats(job: Job) {
-    try{
+    try {
       const dto = _.get(job, 'data.dto')
       const user = _.get(job, 'data.user')
-      const workouts = await this.workoutsService.getChartStats(dto.sport, dto.start, dto.end, user.uuid)
-      if(!workouts){
+      const workouts = await this.workoutsService.getChartStats(
+        dto.sport,
+        dto.start,
+        dto.end,
+        user.uuid,
+      )
+      if (!workouts) {
         return
       }
       return { workouts, start: dto.start, end: dto.end }
@@ -71,8 +84,12 @@ export class StatsProcessor {
     try {
       const dto = _.get(job, 'data.dto')
       const user = _.get(job, 'data.user')
-      const powerCurve = await this.powerCurveService.getForPeriod(dto.start, dto.end, user.uuid)
-      if(!powerCurve){
+      const powerCurve = await this.powerCurveService.getForPeriod(
+        dto.start,
+        dto.end,
+        user.uuid,
+      )
+      if (!powerCurve) {
         return
       }
       return { powerCurve, start: dto.start, end: dto.end }

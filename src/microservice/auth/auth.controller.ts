@@ -1,7 +1,21 @@
 import { Public, User } from '@/decorators'
-import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
 import { Request, Response } from 'express'
-import { AuthUserDto, ChangePasswordDto, EmailDto } from '@/microservice/auth/dto'
+import {
+  AuthUserDto,
+  ChangePasswordDto,
+  EmailDto,
+} from '@/microservice/auth/dto'
 import { UserModel } from '@/db/model'
 import { ApiTags } from '@nestjs/swagger'
 import { GithubAuthGuard, GoogleOauthGuard } from '@/guards'
@@ -16,8 +30,8 @@ import { CryptoHelper } from '@/common/helpers'
 import { MailerService } from '@nestjs-modules/mailer'
 
 type ReqWithSocialMediaUser = Request & {
-  user: UserFromSocialMedia
-}
+  user: UserFromSocialMedia;
+};
 
 @Controller('auth')
 @ApiTags('auth')
@@ -40,41 +54,47 @@ export class AuthController {
       password: hashPassword,
     })
     const publicUser = this.userService.getPublicUser(user)
-    return res
-      .header('Content-Type', 'application/json')
-      .send(publicUser)
+    return res.header('Content-Type', 'application/json').send(publicUser)
   }
 
   @Post('')
   @Public()
   async login(@Body() dto: AuthUserDto, @Res() res: Response) {
     const user = await this.userService.validateUser(dto)
-    const workoutCount = await this.workoutsService.getCountByUserUuid(user.uuid)
+    const workoutCount = await this.workoutsService.getCountByUserUuid(
+      user.uuid,
+    )
     const payload: Payload = { uuid: user.uuid }
     const token = await this.jwtService.signAsync(payload)
     const publicUser = this.userService.getPublicUser(user)
     return res
-      .header({ 'Authorization': `Bearer ${token}` })
+      .header({ Authorization: `Bearer ${token}` })
       .header('Content-Type', 'application/json')
       .send({ ...publicUser, workoutCount })
   }
 
   @Get('logout')
   async logout(@Res() res: Response) {
-    return res.header({ 'Authorization': `` })
+    return res
+      .header({ Authorization: `` })
       .header('Content-Type', 'application/json')
       .send()
   }
 
   @Get()
   async auth(@User() user: UserModel) {
-    const workoutCount = await this.workoutsService.getCountByUserUuid(user.uuid)
+    const workoutCount = await this.workoutsService.getCountByUserUuid(
+      user.uuid,
+    )
     const publicUser = this.userService.getPublicUser(user)
     return { ...publicUser, workoutCount }
   }
 
   @Patch('')
-  async changePassword(@Body() dto: ChangePasswordDto, @User() user: UserModel) {
+  async changePassword(
+    @Body() dto: ChangePasswordDto,
+    @User() user: UserModel,
+  ) {
     return this.userService.changePassword(dto, user)
   }
 
@@ -84,29 +104,37 @@ export class AuthController {
     return this.userService.remove(user)
   }
 
-
   @Get('google/callback')
   @Public()
   @UseGuards(GoogleOauthGuard)
-  async googleAuthCallback(@Req() req: ReqWithSocialMediaUser, @Res() res: Response) {
+  async googleAuthCallback(
+    @Req() req: ReqWithSocialMediaUser,
+    @Res() res: Response,
+  ) {
     try {
-      if(!req?.user?.provider_id){
+      if (!req?.user?.provider_id) {
         throw new CustomError(401, 'User not found!')
       }
       const { provider, provider_id } = req.user
-      const userFromDb = await this.userService.findByProvider(provider, provider_id)
+      const userFromDb = await this.userService.findByProvider(
+        provider,
+        provider_id,
+      )
 
-      if(!userFromDb) {
+      if (!userFromDb) {
         const user = await this.userService.createWithOAuth(req.user)
         const payload: Payload = { uuid: user.uuid }
         const token = await this.jwtService.signAsync(payload)
-        res.redirect(`${this.configService.get('auth.clientUrl')}/?token=${token}`)
+        res.redirect(
+          `${this.configService.get('auth.clientUrl')}/?token=${token}`,
+        )
       }
 
       const payload: Payload = { uuid: userFromDb.uuid }
       const token = await this.jwtService.signAsync(payload)
-      res.redirect(`${this.configService.get('auth.clientUrl')}/?token=${token}`)
-
+      res.redirect(
+        `${this.configService.get('auth.clientUrl')}/?token=${token}`,
+      )
     } catch (e: unknown) {
       return res
         .status(_.get(e, 'status', 500))
@@ -118,25 +146,34 @@ export class AuthController {
   @Get('github/callback')
   @Public()
   @UseGuards(GithubAuthGuard)
-  async githubAuthCallback(@Req() req: ReqWithSocialMediaUser, @Res() res: Response) {
+  async githubAuthCallback(
+    @Req() req: ReqWithSocialMediaUser,
+    @Res() res: Response,
+  ) {
     try {
-      if(!req?.user?.provider_id){
+      if (!req?.user?.provider_id) {
         throw new CustomError(401, 'User not found!')
       }
       const { provider, provider_id } = req.user
-      const userFromDb = await this.userService.findByProvider(provider, provider_id)
+      const userFromDb = await this.userService.findByProvider(
+        provider,
+        provider_id,
+      )
 
-      if(!userFromDb) {
+      if (!userFromDb) {
         const user = await this.userService.createWithOAuth(req.user)
         const payload: Payload = { uuid: user.uuid }
         const token = await this.jwtService.signAsync(payload)
-        res.redirect(`${this.configService.get('auth.clientUrl')}/?token=${token}`)
+        res.redirect(
+          `${this.configService.get('auth.clientUrl')}/?token=${token}`,
+        )
       }
 
       const payload: Payload = { uuid: userFromDb.uuid }
       const token = await this.jwtService.signAsync(payload)
-      res.redirect(`${this.configService.get('auth.clientUrl')}/?token=${token}`)
-
+      res.redirect(
+        `${this.configService.get('auth.clientUrl')}/?token=${token}`,
+      )
     } catch (e: unknown) {
       return res
         .status(_.get(e, 'status', 500))
@@ -148,20 +185,21 @@ export class AuthController {
   @Post('password-recovery')
   @Public()
   async passwordRecovery(@Body() dto: EmailDto, @Res() res: Response) {
-    const user = await this.userService.findByEmail(dto.email, PROVIDER_TYPE.EMAIL)
-    if(user){
+    const user = await this.userService.findByEmail(
+      dto.email,
+      PROVIDER_TYPE.EMAIL,
+    )
+    if (user) {
       const payload: Payload = { uuid: user.uuid }
       const token = await this.jwtService.signAsync(payload)
       const message = `Forgot your password? If you didn't forget your password, please ignore this email! Password recovery link: ${this.configService.get('auth.clientUrl')}/?recovery=${token}`
-      try{
+      try {
         this.mailService.sendMail({
           to: user.email,
           subject: `Password Recovery`,
           text: message,
         })
-        return res
-          .header('Content-Type', 'application/json')
-          .send(true)
+        return res.header('Content-Type', 'application/json').send(true)
       } catch (e: unknown) {
         return res
           .status(_.get(e, 'status', 500))
@@ -169,8 +207,6 @@ export class AuthController {
           .send({ message: _.get(e, 'message', 'Internal server error') })
       }
     }
-    return res
-      .header('Content-Type', 'application/json')
-      .send(true)
+    return res.header('Content-Type', 'application/json').send(true)
   }
 }

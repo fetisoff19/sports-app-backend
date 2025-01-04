@@ -5,14 +5,12 @@ import { DefaultFields } from '@/db/model/_default'
 
 @Entity({ name: 'power_curve' })
 export class PowerCurveModel extends DefaultFields {
-
   @Column({ type: 'uuid', name: 'workout_uuid' })
   workout_uuid: string
 
-  @OneToOne(() => WorkoutModel,
-    (model) => model.powerCurve,
-    { cascade: ['remove'] },
-  )
+  @OneToOne(() => WorkoutModel, (model) => model.powerCurve, {
+    cascade: ['remove'],
+  })
   @JoinColumn({ name: 'workout_uuid' })
   workout: WorkoutModel
 

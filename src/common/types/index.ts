@@ -16,6 +16,3 @@ export * from './chart-stats'
 export * from './google-profile'
 export * from './user-from-social-media'
 export * from './user-types.enum'
-
-
-

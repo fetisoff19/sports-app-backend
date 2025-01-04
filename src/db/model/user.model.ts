@@ -8,10 +8,7 @@ export class UserModel extends DefaultFields {
   @Column({ type: 'text', name: 'login' })
   login: string
 
-  @Column({ name: 'provider',
-    type: 'enum',
-    enum: PROVIDER_TYPE,
-  })
+  @Column({ name: 'provider', type: 'enum', enum: PROVIDER_TYPE })
   provider: PROVIDER_TYPE
 
   @Column({ type: 'text', name: 'provider_id', nullable: true })

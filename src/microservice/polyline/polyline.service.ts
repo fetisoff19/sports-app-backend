@@ -6,7 +6,11 @@ import { Injectable } from '@nestjs/common'
 export class PolylineService {
   constructor(private readonly polylineRepository: PolylineRepository) {}
 
-  public create(points: [number, number][], origLength: number, workoutUuid: string) {
+  public create(
+    points: [number, number][],
+    origLength: number,
+    workoutUuid: string,
+  ) {
     return this.polylineRepository.create({
       points: JSON.stringify(points),
       orig_length: origLength,
@@ -17,15 +21,16 @@ export class PolylineService {
 
   public getPoints(records: WorkoutRecord[], smoothing: number) {
     const points: [number, number][] = []
-    if (Object.hasOwn(records.at(0), 'positionLat') ||
-      Object.hasOwn(records[Math.round(records.length / 2)],'positionLat') ||
-      Object.hasOwn(records.at(-1),'positionLat')
+    if (
+      Object.hasOwn(records.at(0), 'positionLat') ||
+      Object.hasOwn(records[Math.round(records.length / 2)], 'positionLat') ||
+      Object.hasOwn(records.at(-1), 'positionLat')
     ) {
       records.forEach((record, index) => {
         if (
           !(index % smoothing) &&
-          Object.hasOwn(record,'positionLat') &&
-          Object.hasOwn(record,'positionLong')
+          Object.hasOwn(record, 'positionLat') &&
+          Object.hasOwn(record, 'positionLong')
         ) {
           points.push(this.convertGarminLatLongToNormal(record))
         }
@@ -35,7 +40,9 @@ export class PolylineService {
     return points
   }
 
-  private convertGarminLatLongToNormal(records: WorkoutRecord): [number, number] {
+  private convertGarminLatLongToNormal(
+    records: WorkoutRecord,
+  ): [number, number] {
     const { positionLat, positionLong } = records
     const divisor = 11930465
     return [positionLat / divisor, positionLong / divisor]

@@ -17,8 +17,8 @@ export class CryptoHelper {
     buffer,
     originalname,
   }: {
-    buffer: ArrayBuffer
-    originalname: string
+    buffer: ArrayBuffer;
+    originalname: string;
   }): Promise<string> {
     try {
       const hashBuffer = await globalThis.crypto.subtle.digest(

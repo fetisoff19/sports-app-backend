@@ -18,13 +18,13 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
       secretOrKey: configService.get<string>('auth.secret'),
     })
   }
-  
+
   async validate(payload: Payload) {
     const user = await this.userService.findByUuid(payload.uuid)
-    if(!user) {
+    if (!user) {
       throw new CustomError(401, 'Auth error')
     }
-    
+
     return user
   }
 }

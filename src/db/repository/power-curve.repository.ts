@@ -29,7 +29,7 @@ export class PowerCurveRepository extends Repository<PowerCurveModel> {
       .leftJoinAndSelect('pc.workout', 'workout')
       .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
       .andWhere(`workout.date BETWEEN :start AND :end`, { start, end })
-      .select([...timePeriod.map(p => `MAX(pc.${p}) AS "${p}"`)])
+      .select([...timePeriod.map((p) => `MAX(pc.${p}) AS "${p}"`)])
       .getRawOne()
   }
 }

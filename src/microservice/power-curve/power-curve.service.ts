@@ -25,5 +25,4 @@ export class PowerCurveService {
   public async getForPeriod(start: string, end: string, user_uuid: string) {
     return this.powerCurveRepository.getForPeriod(start, end, user_uuid)
   }
-
 }

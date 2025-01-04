@@ -18,20 +18,20 @@ import { MailerModule } from '@nestjs-modules/mailer'
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        return ({
+        return {
           secret: configService.get<string>('auth.secret'),
           signOptions: {
             expiresIn: configService.get<string>('auth.expiresIn'),
           },
           global: true,
-        })
+        }
       },
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        return ({
+        return {
           transport: {
             host: configService.get<string>('mailer.host'),
             secure: false, // true with ssl
@@ -44,7 +44,7 @@ import { MailerModule } from '@nestjs-modules/mailer'
           defaults: {
             from: `Sports App  <${configService.get<string>('mailer.username')}>`,
           },
-        })
+        }
       },
     }),
   ],

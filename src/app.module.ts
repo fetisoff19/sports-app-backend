@@ -5,7 +5,10 @@ import { BullModule } from '@nestjs/bull'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core'
-import { HttpExceptionFilter, TypeORMExceptionFilter } from '@/exception-filters'
+import {
+  HttpExceptionFilter,
+  TypeORMExceptionFilter,
+} from '@/exception-filters'
 import { CustomValidationPipe } from '@/pipes'
 import { DbConfig } from '@/db/config'
 import { UserModule } from '@/microservice/user/user.module'
@@ -22,13 +25,14 @@ import { redisStore } from 'cache-manager-redis-yet'
 import { pinoConfig } from '@/common/helpers'
 import { LoggerModule } from 'nestjs-pino'
 
-
 @Module({
   imports: [
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 200,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 200,
+      },
+    ]),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
@@ -39,9 +43,9 @@ import { LoggerModule } from 'nestjs-pino'
       useFactory: async (configService: ConfigService) => {
         const dir = configService.get('log.dir')
         const token = configService.get<string>('log.token')
-        return ({
+        return {
           pinoHttp: pinoConfig(token, dir),
-        })
+        }
       },
     }),
     BullModule.forRootAsync({
@@ -97,6 +101,5 @@ import { LoggerModule } from 'nestjs-pino'
       useClass: CustomValidationPipe,
     },
   ],
-
 })
 export class AppModule {}

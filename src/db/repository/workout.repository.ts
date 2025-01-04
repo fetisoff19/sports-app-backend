@@ -1,5 +1,10 @@
 import { sort, sortParams, sports } from '@/common/constants'
-import { ChartStats, MainStats, TableStats, WorkoutMainInfo } from '@/common/types'
+import {
+  ChartStats,
+  MainStats,
+  TableStats,
+  WorkoutMainInfo,
+} from '@/common/types'
 import { Injectable } from '@nestjs/common'
 import { DataSource, Repository, SelectQueryBuilder } from 'typeorm'
 
@@ -21,7 +26,10 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
       .getCount()
   }
 
-  async findByUuid(uuid: string, user_uuid: string): Promise<WorkoutMainInfo | null> {
+  async findByUuid(
+    uuid: string,
+    user_uuid: string,
+  ): Promise<WorkoutMainInfo | null> {
     const query = this.getBaseQuery()
       .andWhere('workout.uuid = :uuid', { uuid })
       .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
@@ -60,13 +68,12 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
       .getRawMany()
   }
 
-  async getSports(user_uuid: string): Promise<Partial<Omit<MainStats, 'sport' | 'count'>>[]> {
+  async getSports(
+    user_uuid: string,
+  ): Promise<Partial<Omit<MainStats, 'sport' | 'count'>>[]> {
     return this.getBaseQuery()
       .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
-      .select([
-        'workout.sport AS sport',
-        'COUNT(*) as count',
-      ])
+      .select(['workout.sport AS sport', 'COUNT(*) as count'])
       .groupBy('workout.sport')
       .orderBy('count', 'DESC')
       .getRawMany()
@@ -78,7 +85,7 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
     end: string,
     user_uuid: string,
   ): Promise<TableStats> {
-   const query = this.getBaseQuery()
+    const query = this.getBaseQuery()
       .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
       .andWhere(`workout.date BETWEEN :start AND :end`, { start, end })
       .leftJoinAndSelect('workout.session', 'session')
@@ -103,13 +110,10 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
 
         'MAX(session.max_heart_rate) AS max_heart_rate',
       ])
-    if(sport) {
-      return query
-        .andWhere(`workout.sport = :sport`, { sport })
-        .getRawOne()
+    if (sport) {
+      return query.andWhere(`workout.sport = :sport`, { sport }).getRawOne()
     }
-    return query
-      .getRawOne()
+    return query.getRawOne()
   }
 
   async getChartStats(
@@ -141,17 +145,14 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
 
         'session.max_heart_rate AS max_heart_rate',
         'session.cadence_coef AS cadence_coef',
-
       ])
-    if(sport) {
+    if (sport) {
       return query
         .andWhere(`workout.sport = :sport`, { sport })
         .orderBy('date', 'ASC')
         .getRawMany()
     }
-    return query
-      .orderBy('date', 'ASC')
-      .getRawMany()
+    return query.orderBy('date', 'ASC').getRawMany()
   }
 
   async getWorkoutsCount(user_uuid: string) {
@@ -200,29 +201,31 @@ export class WorkoutRepository extends Repository<WorkoutModel> {
       .distinct(true)
       .leftJoinAndSelect('workout.session', 'session')
       .select(select)
-      .orderBy(param, direction, direction === 'DESC' ? 'NULLS LAST' : 'NULLS FIRST')
+      .orderBy(
+        param,
+        direction,
+        direction === 'DESC' ? 'NULLS LAST' : 'NULLS FIRST',
+      )
       .limit(limit)
       .offset(offset)
-    if(name?.length && sport){
+    if (name?.length && sport) {
       return query
         .andWhere(`workout.sport = :sport`, { sport })
-        .andWhere(`workout.name ILIKE :name`, { name: `%${name}%` } )
+        .andWhere(`workout.name ILIKE :name`, { name: `%${name}%` })
         .getRawMany()
     }
-    if(sport){
-      return query
-        .andWhere(`workout.sport = :sport`, { sport })
-        .getRawMany()
+    if (sport) {
+      return query.andWhere(`workout.sport = :sport`, { sport }).getRawMany()
     }
-    if(name?.length){
+    if (name?.length) {
       return query
-        .andWhere(`workout.name ILIKE :name`, { name: `%${name}%` } )
+        .andWhere(`workout.name ILIKE :name`, { name: `%${name}%` })
         .getRawMany()
     }
     return query.getRawMany()
   }
 
-  async findAllMapImages( user_uuid: string): Promise<{ map: string }[]> {
+  async findAllMapImages(user_uuid: string): Promise<{ map: string }[]> {
     return this.getBaseQuery()
       .andWhere('workout.user_uuid = :user_uuid', { user_uuid })
       .andWhere('workout.map IS NOT NULL')

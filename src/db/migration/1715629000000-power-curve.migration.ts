@@ -2,7 +2,6 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 import { timePeriod } from '@/common/constants'
 
 export class migration1715629000000 implements MigrationInterface {
-
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS public."power_curve" (
@@ -24,5 +23,4 @@ export class migration1715629000000 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('DROP TABLE IF EXISTS public."power_curve";')
   }
-
 }

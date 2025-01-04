@@ -1,10 +1,10 @@
 export type GoogleProfile = {
-  id: string
-  email: string
+  id: string;
+  email: string;
   name: {
-    givenName: string | null
-    familyName: string | null
-  },
-  image: string
-  photos: {value: string}[]
-}
+    givenName: string | null;
+    familyName: string | null;
+  };
+  image: string;
+  photos: { value: string }[];
+};

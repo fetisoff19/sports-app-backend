@@ -1,16 +1,16 @@
 export interface WorkoutRecord {
-  timestamp?: Date
-  distance?: number
-  heartRate?: number
-  cadence?: number
-  power?: number
+  timestamp?: Date;
+  distance?: number;
+  heartRate?: number;
+  cadence?: number;
+  power?: number;
 
-  speed?: number
-  enhancedSpeed?: number
+  speed?: number;
+  enhancedSpeed?: number;
 
-  positionLat?: number
-  positionLong?: number
+  positionLat?: number;
+  positionLong?: number;
 
-  altitude?: number
-  enhancedAltitude?: number
+  altitude?: number;
+  enhancedAltitude?: number;
 }

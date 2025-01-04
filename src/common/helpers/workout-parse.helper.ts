@@ -5,11 +5,12 @@ import { CustomError } from '@/custom-error'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { pick } from 'lodash'
 
-import { Decoder, Stream } from '@garmin/fitsdk'
-
 export class WorkoutParseHelper {
   static async parseFit(file: Express.Multer.File) {
     try {
+      const fitsdk = (await import('@garmin/fitsdk'))
+      const { Decoder, Stream } = fitsdk
+
       const streamFromBuffer = Stream.fromBuffer(file?.buffer)
       const decoder = new Decoder(streamFromBuffer)
       const { messages } = decoder.read()
@@ -36,7 +37,8 @@ export class WorkoutParseHelper {
       }
       const wktName: string = parseFit?.workoutMesgs?.at(0)?.wktName
       const fileName: string = parseFit?.originalname
-      const device: string = Object.values(pick(fileIdMesgs, deviceInfoKeys))?.join(' ') || ''
+      const device: string =
+        Object.values(pick(fileIdMesgs, deviceInfoKeys))?.join(' ') || ''
       const workoutName: string = this.getWorkoutName(fileName, wktName)
 
       const sessionData: Session = this.getSessionData(
@@ -63,7 +65,10 @@ export class WorkoutParseHelper {
     }
   }
 
-  private static getSessionData(session: Record<string, any>, recordsLength: number) {
+  private static getSessionData(
+    session: Record<string, any>,
+    recordsLength: number,
+  ) {
     const result = {}
     const cadence_coef = this.getCadenceCoef(session?.sport || 'other')
     const time_step: number =
@@ -77,20 +82,25 @@ export class WorkoutParseHelper {
       total_timer_time: session.totalTimerTime,
       total_elapsed_time: session.totalElapsedTime,
 
-      total_distance: ConvertValueHelper.convertDistance(session?.totalDistance),
+      total_distance: ConvertValueHelper.convertDistance(
+        session?.totalDistance,
+      ),
 
-      avg_speed: session?.totalDistance > 1 ? ConvertValueHelper.convertSpeed(
-        session?.avgSpeed,
-        cadence_coef,
-      ) : 0, // km/h or min/km
-      enhanced_avg_speed: session?.totalDistance > 1 ? ConvertValueHelper.convertSpeed(
-        session?.enhancedAvgSpeed || session?.avgSpeed,
-        cadence_coef,
-      ) : 0, // km/h or min/km
-      max_speed: session?.totalDistance > 1 ? ConvertValueHelper.convertSpeed(
-        session?.maxSpeed,
-        cadence_coef,
-      ) : 0, // km/h or min/km
+      avg_speed:
+        session?.totalDistance > 1
+          ? ConvertValueHelper.convertSpeed(session?.avgSpeed, cadence_coef)
+          : 0, // km/h or min/km
+      enhanced_avg_speed:
+        session?.totalDistance > 1
+          ? ConvertValueHelper.convertSpeed(
+              session?.enhancedAvgSpeed || session?.avgSpeed,
+              cadence_coef,
+            )
+          : 0, // km/h or min/km
+      max_speed:
+        session?.totalDistance > 1
+          ? ConvertValueHelper.convertSpeed(session?.maxSpeed, cadence_coef)
+          : 0, // km/h or min/km
       enhanced_max_speed: ConvertValueHelper.convertSpeed(
         session?.enhancedMaxSpeed || session?.maxSpeed,
         cadence_coef,
@@ -139,7 +149,8 @@ export class WorkoutParseHelper {
     file_name: string,
     size: number,
   ): Info {
-    const sport = session?.sport && sports.includes(session.sport.toString().toLowerCase())
+    const sport =
+      session?.sport && sports.includes(session.sport.toString().toLowerCase())
         ? session.sport.toString()
         : 'other'
     return {
@@ -169,7 +180,9 @@ export class WorkoutParseHelper {
     return fileName.split('.').slice(0, -1).join('')
   }
 
-  private static getCadenceCoef(sport: (typeof sports)[number]): Session['cadence_coef'] {
+  private static getCadenceCoef(
+    sport: (typeof sports)[number],
+  ): Session['cadence_coef'] {
     if (['running', 'training', 'walking', 'hiking'].includes(sport)) {
       return 2
     }

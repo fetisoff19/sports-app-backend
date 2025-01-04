@@ -62,15 +62,24 @@ export class WorkoutProcessor {
     try {
       const dto = _.get(job, 'data.dto')
       const user = _.get(job, 'data.user')
-      let workout = await this.cacheService.get<WorkoutModel | undefined>(`user:${user.uuid}.workout:${dto.uuid}`)
-      if(workout){
+      let workout = await this.cacheService.get<WorkoutModel | undefined>(
+        `user:${user.uuid}.workout:${dto.uuid}`,
+      )
+      if (workout) {
         return workout
       }
-      workout = await this.workoutsService.getOneWithRelations(dto.uuid, user.uuid)
-      if(!workout){
+      workout = await this.workoutsService.getOneWithRelations(
+        dto.uuid,
+        user.uuid,
+      )
+      if (!workout) {
         return
       }
-      await this.cacheService.set(`user:${user.uuid}.workout:${workout.uuid}`, workout, 3600 * 1000)
+      await this.cacheService.set(
+        `user:${user.uuid}.workout:${workout.uuid}`,
+        workout,
+        3600 * 1000,
+      )
       return workout
     } catch (e: unknown) {
       console.error(e)
@@ -79,18 +88,18 @@ export class WorkoutProcessor {
 
   @Process('rename')
   async rename(job: Job) {
-    try{
+    try {
       const dto = _.get(job, 'data.dto')
       const user = _.get(job, 'data.user')
       const workout = await this.workoutsService.findOne(dto.uuid, user.uuid)
-      if(!workout){
+      if (!workout) {
         return
       }
-      if(Object.hasOwn(dto, 'name') && dto.name.length ){
+      if (Object.hasOwn(dto, 'name') && dto.name.length) {
         workout.name = dto.name
         await this.workoutsService.save(workout)
       }
-      if(Object.hasOwn(dto, 'note') ){
+      if (Object.hasOwn(dto, 'note')) {
         workout.note = dto.note
         await this.workoutsService.save(workout)
       }
@@ -109,7 +118,7 @@ export class WorkoutProcessor {
       const dto = _.get(job, 'data.dto')
       const user = _.get(job, 'data.user')
       const workout = await this.workoutsService.findOne(dto.uuid, user.uuid)
-      if(!workout){
+      if (!workout) {
         return
       }
       // await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
@@ -125,7 +134,7 @@ export class WorkoutProcessor {
     try {
       const user = _.get(job, 'data.user')
       const result = await this.workoutsService.removeAll(user.uuid)
-      if(!result){
+      if (!result) {
         return
       }
       // await this.workoutsService.removeFromCache(`user:${user.uuid}.pagination*`)
@@ -135,6 +144,4 @@ export class WorkoutProcessor {
       console.error(e)
     }
   }
-
-
 }

@@ -8,7 +8,7 @@ import { PolylineService } from '@/microservice/polyline/polyline.service'
 import { PowerCurveService } from '@/microservice/power-curve/power-curve.service'
 import { PaginationDto } from '@/microservice/workout/dto'
 import { WorkoutModel } from '@/db/model'
-import * as StaticMaps from 'staticmaps'
+import StaticMaps from 'staticmaps'
 import * as fs from 'node:fs'
 import { ConfigService } from '@nestjs/config'
 import { join } from 'path'
@@ -42,7 +42,9 @@ export class WorkoutsService {
   }
 
   public async findOne(uuid: string, userUuid: string) {
-    return this.workoutRepository.findOne({ where: { uuid,  user_uuid: userUuid } })
+    return this.workoutRepository.findOne({
+      where: { uuid, user_uuid: userUuid },
+    })
   }
 
   public async getCountByUserUuid(uuid: string) {
@@ -50,7 +52,7 @@ export class WorkoutsService {
   }
 
   public async getWithPagination(userUuid: string, dto: PaginationDto) {
-    const sport = (!dto.sport || dto.sport === 'all') ? null : dto.sport
+    const sport = !dto.sport || dto.sport === 'all' ? null : dto.sport
     return await this.workoutRepository.getWithPagination(
       userUuid,
       dto.direction,
@@ -63,21 +65,20 @@ export class WorkoutsService {
   }
 
   public async getSportsDatesAndCount(userUuid: string, withDates = true) {
-    if(withDates){
+    if (withDates) {
       return this.workoutRepository.getSportsDatesAndCount(userUuid)
     }
     return this.workoutRepository.getSports(userUuid)
   }
 
   public async getTableStats(
-  sport: (typeof sports)[number] | null,
-  start: string,
-  end: string,
-  userUuid: string,
-){
+    sport: (typeof sports)[number] | null,
+    start: string,
+    end: string,
+    userUuid: string,
+  ) {
     return this.workoutRepository.getTableStats(sport, start, end, userUuid)
   }
-
 
   public async getChartStats(
     sport: (typeof sports)[number] | null,
@@ -91,7 +92,10 @@ export class WorkoutsService {
   public async uploadFile(file: Express.Multer.File, user_uuid: string) {
     try {
       const sha256 = await CryptoHelper.hash256File(file)
-      const duplicate = await this.workoutRepository.findByUserUuidAndSha256(user_uuid, sha256)
+      const duplicate = await this.workoutRepository.findByUserUuidAndSha256(
+        user_uuid,
+        sha256,
+      )
       if (duplicate) {
         const duplicateName = duplicate?.file_name || ''
         throw new CustomError(
@@ -124,10 +128,12 @@ export class WorkoutsService {
       })
       let workout!: WorkoutModel
       try {
-
         let image!: string
-        if(polylinePoints.length){
-          const coords: [number, number][] = polylinePoints.map(point => [point[1], point[0]])
+        if (polylinePoints.length) {
+          const coords: [number, number][] = polylinePoints.map((point) => [
+            point[1],
+            point[0],
+          ])
           const options = {
             width: 300,
             height: 300,
@@ -169,11 +175,16 @@ export class WorkoutsService {
           ...mutatedSession,
           workout_uuid: workout.uuid,
         })
-
-        chartPoints?.length && await queryRunner.manager.save(chartData)
+        if(chartPoints){
+          await queryRunner.manager.save(chartData)
+        }
         await queryRunner.manager.save(session)
-        polylinePoints?.length && await queryRunner.manager.save(polyline)
-        powerCurvePoints && await queryRunner.manager.save(powerCurve)
+        if(polylinePoints){
+          await queryRunner.manager.save(polyline)
+        }
+        if(powerCurvePoints){
+          await queryRunner.manager.save(powerCurve)
+        }
         await queryRunner.commitTransaction()
 
         return this.workoutRepository.findByUuid(workout.uuid, user_uuid)
@@ -184,16 +195,13 @@ export class WorkoutsService {
         await queryRunner.release()
       }
     } catch (e) {
-      throw new CustomError(
-        422,
-        `Error uploading file: ${e?.message || e}`,
-      )
+      throw new CustomError(422, `Error uploading file: ${e?.message || e}`)
     }
   }
 
   public async removeOne(workout: WorkoutModel) {
-    const res =  this.workoutRepository.removeOne(workout)
-    if(workout.map) {
+    const res = this.workoutRepository.removeOne(workout)
+    if (workout.map) {
       this.removeMapImage(workout.map)
     }
     return res
@@ -212,7 +220,7 @@ export class WorkoutsService {
     return result
   }
 
-  public async removeFromCache(pattern: string){
+  public async removeFromCache(pattern: string) {
     const keys = await this.cacheService.store.keys(pattern)
     for (const key of keys) {
       await this.cacheService.del(key)
@@ -220,14 +228,13 @@ export class WorkoutsService {
   }
 
   private removeMapImage(uuid: string) {
-    if(uuid){
+    if (uuid) {
       const path = join(this.uploadDir(), `${uuid}`)
-      fs.unlink(path,() => {})
+      fs.unlink(path, () => {})
     }
   }
 
-  private uploadDir(){
+  private uploadDir() {
     return this.configService.get('upload.dir')
   }
-
 }

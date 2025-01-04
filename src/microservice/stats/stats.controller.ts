@@ -12,22 +12,26 @@ import { MainDto } from '@/microservice/stats/dto/main.dto'
 
 @Controller('stats')
 @ApiTags('stats')
-
 export class StatsController {
   constructor(@InjectQueue('stats') private readonly workoutQueue: Queue) {}
 
   @Get('main')
-  async getMainStats(@Query(new ValidationPipe({ transform: true })) dto: MainDto, @User() user: UserModel, @Res() res: Response) {
+  async getMainStats(
+    @Query(new ValidationPipe({ transform: true })) dto: MainDto,
+    @User() user: UserModel,
+    @Res() res: Response,
+  ) {
     try {
       const job = await this.workoutQueue.add('main', { dto, user })
       const result = await job.finished()
       if (!result) {
         throw new CustomError(500, 'Internal server error')
       }
-      return res.status(200)
+      return res
+        .status(200)
         .header('Content-Type', 'application/json')
         .send(result)
-    } catch(e: unknown){
+    } catch (e: unknown) {
       return res
         .status(_.get(e, 'status', 500))
         .header('Content-Type', 'application/json')
@@ -36,17 +40,22 @@ export class StatsController {
   }
 
   @Get('table')
-  async getTableStats(@Query(new ValidationPipe({ transform: true })) dto: StatsDto, @User() user: UserModel, @Res() res: Response) {
+  async getTableStats(
+    @Query(new ValidationPipe({ transform: true })) dto: StatsDto,
+    @User() user: UserModel,
+    @Res() res: Response,
+  ) {
     try {
       const job = await this.workoutQueue.add('table', { dto, user })
       const result = await job.finished()
       if (!result) {
         throw new CustomError(500, 'Internal server error')
       }
-      return res.status(200)
+      return res
+        .status(200)
         .header('Content-Type', 'application/json')
         .send(result)
-    } catch(e: unknown){
+    } catch (e: unknown) {
       return res
         .status(_.get(e, 'status', 500))
         .header('Content-Type', 'application/json')
@@ -55,17 +64,22 @@ export class StatsController {
   }
 
   @Get('chart')
-  async getChartStats(@Query(new ValidationPipe({ transform: true })) dto: StatsDto, @User() user: UserModel, @Res() res: Response) {
+  async getChartStats(
+    @Query(new ValidationPipe({ transform: true })) dto: StatsDto,
+    @User() user: UserModel,
+    @Res() res: Response,
+  ) {
     try {
       const job = await this.workoutQueue.add('chart', { dto, user })
       const result = await job.finished()
       if (!result) {
         throw new CustomError(500, 'Internal server error')
       }
-      return res.status(200)
+      return res
+        .status(200)
         .header('Content-Type', 'application/json')
         .send(result)
-    } catch(e: unknown){
+    } catch (e: unknown) {
       return res
         .status(_.get(e, 'status', 500))
         .header('Content-Type', 'application/json')
@@ -74,17 +88,22 @@ export class StatsController {
   }
 
   @Get('power-curve')
-  async getPowerCurve(@Query(new ValidationPipe({ transform: true })) dto: PowerCurveDto, @User() user: UserModel, @Res() res: Response) {
+  async getPowerCurve(
+    @Query(new ValidationPipe({ transform: true })) dto: PowerCurveDto,
+    @User() user: UserModel,
+    @Res() res: Response,
+  ) {
     try {
       const job = await this.workoutQueue.add('power-curve', { dto, user })
       const result = await job.finished()
       if (!result) {
         throw new CustomError(500, 'Internal server error')
       }
-      return res.status(200)
+      return res
+        .status(200)
         .header('Content-Type', 'application/json')
         .send(result)
-    } catch(e: unknown){
+    } catch (e: unknown) {
       return res
         .status(_.get(e, 'status', 500))
         .header('Content-Type', 'application/json')

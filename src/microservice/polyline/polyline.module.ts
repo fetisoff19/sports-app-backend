@@ -5,8 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { PolylineService } from './polyline.service'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PolylineModel]),
-  ],
+  imports: [TypeOrmModule.forFeature([PolylineModel])],
   providers: [PolylineService, PolylineRepository],
   exports: [PolylineService],
 })

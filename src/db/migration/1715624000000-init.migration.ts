@@ -1,7 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class migration1715624000000 implements MigrationInterface {
-
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -32,5 +31,4 @@ export class migration1715624000000 implements MigrationInterface {
     await queryRunner.query('DROP TYPE PROVIDER_TYPE;')
     await queryRunner.query('DROP TYPE ROLE_TYPE;')
   }
-
 }

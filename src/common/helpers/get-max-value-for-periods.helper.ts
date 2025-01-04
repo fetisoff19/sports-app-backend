@@ -41,8 +41,7 @@ export function getMaxValueForArrayPeriods(
             }
           } else if (i >= item && Number.isInteger(records[i - item][unit])) {
             previousValue = records[i - item][unit]
-            temp[item] =
-              temp[item] + records[i][unit] - previousValue
+            temp[item] = temp[item] + records[i][unit] - previousValue
             if (temp[item] > result.get(item)) {
               result.set(item, temp[item])
               indexObj[item] = i - item

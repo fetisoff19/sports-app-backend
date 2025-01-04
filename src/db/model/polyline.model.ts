@@ -4,15 +4,12 @@ import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
 
 @Entity({ name: 'polyline' })
 export class PolylineModel extends DefaultFields {
-
   @Column({ type: 'uuid', name: 'workout_uuid' })
   workout_uuid: string
 
-  @OneToOne(
-    () => WorkoutModel,
-    (model) => model.polyline,
-    { cascade: ['remove'] },
-  )
+  @OneToOne(() => WorkoutModel, (model) => model.polyline, {
+    cascade: ['remove'],
+  })
   @JoinColumn({ name: 'workout_uuid' })
   workout: WorkoutModel
 
@@ -24,5 +21,4 @@ export class PolylineModel extends DefaultFields {
 
   @Column({ type: 'int', name: 'orig_length' })
   orig_length: number
-
 }
