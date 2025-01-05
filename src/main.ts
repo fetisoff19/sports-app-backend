@@ -17,9 +17,7 @@ async function bootstrap() {
   })
   app.enableCors({
     exposedHeaders: 'Authorization',
-    origin: [
-      process.env.CLIENT_URL,
-    ],
+    origin: [process.env.CLIENT_URL],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: false,
   })
@@ -33,7 +31,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder().setTitle('sports-app').build()
   const document = SwaggerModule.createDocument(app, config)
-  if(process?.env?.NODE_ENV !== 'prod'){
+  if (process?.env?.NODE_ENV !== 'prod') {
     SwaggerModule.setup('api', app, document)
   }
 

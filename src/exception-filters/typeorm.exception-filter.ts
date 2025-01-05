@@ -17,8 +17,6 @@ export class TypeORMExceptionFilter implements ExceptionFilter {
   private exceptionResponse: ExceptionResponse = this.defaultExceptionResponse
 
   catch(exception: TypeORMError | QueryFailedError, host: ArgumentsHost) {
-    // уникальный индификатор запроса (uuid) + ошибка
-
     const ctx = host.switchToHttp()
     const request = ctx.getRequest<Request>()
     const response = ctx.getResponse<Response>()

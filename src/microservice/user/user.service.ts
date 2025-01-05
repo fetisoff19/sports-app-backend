@@ -16,14 +16,6 @@ import { CryptoHelper } from '@/common/helpers'
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async findAndGetPublicUser(uuid: string) {
-    const user = await this.userRepository.findByUuid(uuid)
-    if (user) {
-      return this.getPublicUser(user)
-    }
-    throw new CustomError(400, 'Пользователь не найден')
-  }
-
   async findByUuid(uuid: string): Promise<UserModel | null> {
     return this.userRepository.findByUuid(uuid)
   }

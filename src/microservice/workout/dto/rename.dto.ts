@@ -1,4 +1,4 @@
-import { DefaultDto } from 'src/common/dto'
+import { DefaultDto } from '@/common/dto'
 import { IsOptional, IsString, MinLength } from 'class-validator'
 
 export class RenameDto extends DefaultDto {

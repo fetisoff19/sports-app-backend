@@ -1,4 +1,4 @@
-import { DefaultDto } from 'src/common/dto'
+import { DefaultDto } from '@/common/dto'
 import { UserModel } from '@/db/model'
 
 import { InjectQueue } from '@nestjs/bull'
@@ -15,7 +15,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { Queue } from 'bull'
-import { User } from 'src/decorators'
+import { User } from '@/decorators'
 import { WorkoutsService } from '@/microservice/workout/workout.service'
 import { PaginationDto, RenameDto } from '@/microservice/workout/dto'
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger'

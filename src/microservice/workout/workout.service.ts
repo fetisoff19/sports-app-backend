@@ -175,14 +175,14 @@ export class WorkoutsService {
           ...mutatedSession,
           workout_uuid: workout.uuid,
         })
-        if(chartPoints){
+        if (chartPoints) {
           await queryRunner.manager.save(chartData)
         }
         await queryRunner.manager.save(session)
-        if(polylinePoints){
+        if (polylinePoints) {
           await queryRunner.manager.save(polyline)
         }
-        if(powerCurvePoints){
+        if (powerCurvePoints) {
           await queryRunner.manager.save(powerCurve)
         }
         await queryRunner.commitTransaction()

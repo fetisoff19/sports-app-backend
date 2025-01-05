@@ -6,11 +6,11 @@ export function getMaxValueForArrayPeriods(
   arrPeriods: number[],
 ) {
   if (
-    (records.length && Number.isInteger(records[0][unit])) ||
-    Number.isInteger(records[1][unit])
+    (records.length && Number.isInteger(records?.[0]?.[unit])) ||
+    Number.isInteger(records?.[1]?.[unit])
   ) {
     let timeStep: number
-    if (records[0]?.timestamp) {
+    if (records[0]?.timestamp !== undefined && records[1]?.timestamp !== undefined) {
       timeStep =
         Math.round(
           (records[1].timestamp.getTime() - records[0].timestamp.getTime()) /

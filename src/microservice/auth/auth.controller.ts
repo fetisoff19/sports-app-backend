@@ -54,7 +54,9 @@ export class AuthController {
       password: hashPassword,
     })
     const publicUser = this.userService.getPublicUser(user)
-    return res.header('Content-Type', 'application/json').send(publicUser)
+    return res
+      .header('Content-Type', 'application/json')
+      .send(publicUser)
   }
 
   @Post('')
@@ -111,36 +113,7 @@ export class AuthController {
     @Req() req: ReqWithSocialMediaUser,
     @Res() res: Response,
   ) {
-    try {
-      if (!req?.user?.provider_id) {
-        throw new CustomError(401, 'User not found!')
-      }
-      const { provider, provider_id } = req.user
-      const userFromDb = await this.userService.findByProvider(
-        provider,
-        provider_id,
-      )
-
-      if (!userFromDb) {
-        const user = await this.userService.createWithOAuth(req.user)
-        const payload: Payload = { uuid: user.uuid }
-        const token = await this.jwtService.signAsync(payload)
-        res.redirect(
-          `${this.configService.get('auth.clientUrl')}/?token=${token}`,
-        )
-      }
-
-      const payload: Payload = { uuid: userFromDb.uuid }
-      const token = await this.jwtService.signAsync(payload)
-      res.redirect(
-        `${this.configService.get('auth.clientUrl')}/?token=${token}`,
-      )
-    } catch (e: unknown) {
-      return res
-        .status(_.get(e, 'status', 500))
-        .header('Content-Type', 'application/json')
-        .send({ message: _.get(e, 'message', 'Internal server error') })
-    }
+    return this.providerCallback(req, res)
   }
 
   @Get('github/callback')
@@ -150,36 +123,7 @@ export class AuthController {
     @Req() req: ReqWithSocialMediaUser,
     @Res() res: Response,
   ) {
-    try {
-      if (!req?.user?.provider_id) {
-        throw new CustomError(401, 'User not found!')
-      }
-      const { provider, provider_id } = req.user
-      const userFromDb = await this.userService.findByProvider(
-        provider,
-        provider_id,
-      )
-
-      if (!userFromDb) {
-        const user = await this.userService.createWithOAuth(req.user)
-        const payload: Payload = { uuid: user.uuid }
-        const token = await this.jwtService.signAsync(payload)
-        res.redirect(
-          `${this.configService.get('auth.clientUrl')}/?token=${token}`,
-        )
-      }
-
-      const payload: Payload = { uuid: userFromDb.uuid }
-      const token = await this.jwtService.signAsync(payload)
-      res.redirect(
-        `${this.configService.get('auth.clientUrl')}/?token=${token}`,
-      )
-    } catch (e: unknown) {
-      return res
-        .status(_.get(e, 'status', 500))
-        .header('Content-Type', 'application/json')
-        .send({ message: _.get(e, 'message', 'Internal server error') })
-    }
+    return this.providerCallback(req, res)
   }
 
   @Post('password-recovery')
@@ -209,4 +153,38 @@ export class AuthController {
     }
     return res.header('Content-Type', 'application/json').send(true)
   }
+
+  private async providerCallback(req: ReqWithSocialMediaUser, res: Response){
+    try {
+      if (!req?.user?.provider_id) {
+        throw new CustomError(401, 'User not found!')
+      }
+      const { provider, provider_id } = req.user
+      const userFromDb = await this.userService.findByProvider(
+        provider,
+        provider_id,
+      )
+
+      if (!userFromDb) {
+        const user = await this.userService.createWithOAuth(req.user)
+        const payload: Payload = { uuid: user.uuid }
+        const token = await this.jwtService.signAsync(payload)
+        res.redirect(
+          `${this.configService.get('auth.clientUrl')}/?token=${token}`,
+        )
+      }
+
+      const payload: Payload = { uuid: userFromDb.uuid }
+      const token = await this.jwtService.signAsync(payload)
+      res.redirect(
+        `${this.configService.get('auth.clientUrl')}/?token=${token}`,
+      )
+    } catch (e: unknown) {
+      return res
+        .status(_.get(e, 'status', 500))
+        .header('Content-Type', 'application/json')
+        .send({ message: _.get(e, 'message', 'Internal server error') })
+    }
+  }
+
 }

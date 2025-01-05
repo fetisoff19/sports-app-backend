@@ -8,7 +8,7 @@ import { pick } from 'lodash'
 export class WorkoutParseHelper {
   static async parseFit(file: Express.Multer.File) {
     try {
-      const fitsdk = (await import('@garmin/fitsdk'))
+      const fitsdk = await import('@garmin/fitsdk')
       const { Decoder, Stream } = fitsdk
 
       const streamFromBuffer = Stream.fromBuffer(file?.buffer)
@@ -173,16 +173,14 @@ export class WorkoutParseHelper {
       if (Array.isArray(name)) {
         return name.join(' ')
       }
-      if (typeof name === 'string') {
-        return name
-      }
+      return name
     }
     return fileName.split('.').slice(0, -1).join('')
   }
 
   private static getCadenceCoef(
     sport: (typeof sports)[number],
-  ): Session['cadence_coef'] {
+  ): 1 | 2 {
     if (['running', 'training', 'walking', 'hiking'].includes(sport)) {
       return 2
     }

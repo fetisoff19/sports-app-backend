@@ -17,7 +17,7 @@ export class CustomValidationPipe implements PipeTransform {
       const message = errors
         .map((error) => Object.values(error.constraints).join(', '))
         .join(', ')
-      throw new CustomError(500, message)
+      throw new CustomError(400, message)
     }
     return value
   }
