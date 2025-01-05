@@ -2,7 +2,7 @@ name: cd
 on:
   workflow_run:
     branches:
-      - main
+      - master
     workflows: [ ci ]
     types: [ completed ]
 jobs:
