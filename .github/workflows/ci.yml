@@ -1,0 +1,32 @@
+name: ci
+on: push
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9
+      - name: install dependencies
+        run: pnpm install
+
+      - name: lint
+        run: pnpm run lint
+  test:
+    needs: [ lint ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9
+      - name: install dependencies
+        run: pnpm install
+      - name: lint
+        run: pnpm run test
