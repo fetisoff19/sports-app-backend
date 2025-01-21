@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common'
-import config from './config'
+import config from '@/config'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { BullModule } from '@nestjs/bull'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core'
-import {
-  HttpExceptionFilter,
-  TypeORMExceptionFilter,
-} from '@/exception-filters'
+import { HttpExceptionFilter, TypeORMExceptionFilter } from '@/exception-filters'
 import { CustomValidationPipe } from '@/pipes'
 import { DbConfig } from '@/db/config'
 import { UserModule } from '@/microservice/user/user.module'
@@ -102,5 +99,6 @@ import { LoggerModule } from 'nestjs-pino'
       useClass: CustomValidationPipe,
     },
   ],
+  controllers: [],
 })
 export class AppModule {}

@@ -4,6 +4,7 @@ import * as process from 'process'
 
 const config = () => ({
   env: process.env.NODE_ENV,
+  host: process.env.HOST ?? '0.0.0.0',
   port: process.env.PORT,
 
   auth: {
@@ -22,11 +23,11 @@ const config = () => ({
     dir: process.env.APP_UPLOAD_DIR,
   },
   db: {
-    host: process.env.POSTGRES_HOST || 'localhost',
-    port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
-    user: process.env.POSTGRES_USER || 'postgres',
-    pass: process.env.POSTGRES_PASSWORD || 'postgres',
-    name: process.env.POSTGRES_DB || 'postgres',
+    host: process.env.POSTGRES_HOST ?? 'localhost',
+    port: parseInt(process.env.POSTGRES_PORT, 10) ?? 5432,
+    user: process.env.POSTGRES_USER ?? 'postgres',
+    pass: process.env.POSTGRES_PASSWORD ?? 'postgres',
+    name: process.env.POSTGRES_DB ?? 'postgres',
   },
   mailer: {
     host: process.env.EMAIL_HOST,
@@ -39,8 +40,8 @@ const config = () => ({
   },
 
   redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+    host: process.env.REDIS_HOST ?? 'localhost',
+    port: parseInt(process.env.REDIS_PORT, 10) ?? 6379,
   },
 })
 

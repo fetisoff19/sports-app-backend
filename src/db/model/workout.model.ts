@@ -1,10 +1,4 @@
-import {
-  ChartDataModel,
-  PolylineModel,
-  PowerCurveModel,
-  SessionModel,
-  UserModel,
-} from '@/db/model'
+import { ChartDataModel, PolylineModel, PowerCurveModel, SessionModel, UserModel } from '@/db/model'
 
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
 import { DefaultFields } from '@/db/model/_default'

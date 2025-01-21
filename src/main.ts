@@ -1,15 +1,14 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import * as process from 'node:process'
-import {
-  HttpExceptionFilter,
-  TypeORMExceptionFilter,
-} from '@/exception-filters'
+import { HttpExceptionFilter, TypeORMExceptionFilter } from '@/exception-filters'
 import { CustomValidationPipe } from '@/pipes'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 import * as fs from 'node:fs'
 import { join } from 'path'
+import { MicroserviceOptions, Transport } from '@nestjs/microservices'
+import { NotificationModule } from '@/microservice/notification/notification.module'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -23,7 +22,8 @@ async function bootstrap() {
   })
 
   const configService = app.get<ConfigService>(ConfigService)
-  const port = configService.get<number>('port')
+  const appPort = configService.get<number>('port')
+  const appHost = configService.get<string>('host')
 
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new CustomValidationPipe())
@@ -39,10 +39,24 @@ async function bootstrap() {
   await fs.promises.mkdir(join(__dirname, '..', path), { recursive: true })
 
   await app
-    .listen(port, '0.0.0.0')
-    .then(() =>
-      console.log(`⚡️ [server]: Server is running on port = ${port}`),
-    )
+    .listen(appPort, appHost)
+    .then(() => console.log(`⚡️ [server]: Server is running on port = ${appPort}`))
+
+
+  const notificationApp = await NestFactory.createMicroservice<MicroserviceOptions>(
+    NotificationModule,
+    {
+      transport: Transport.REDIS,
+      options: {
+        port: configService.get<number>('redis.port'),
+        host: configService.get<string>('redis.host'),
+      },
+    },
+  )
+  await notificationApp
+    .listen()
+    .then(() => console.log(`⚡️ [microservice]: NotificationApp is running`))
+
 }
 
 bootstrap()

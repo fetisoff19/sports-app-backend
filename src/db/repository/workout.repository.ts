@@ -1,10 +1,5 @@
 import { sort, sortParams, sports } from '@/common/constants'
-import {
-  ChartStats,
-  MainStats,
-  TableStats,
-  WorkoutMainInfo,
-} from '@/common/types'
+import { ChartStats, MainStats, TableStats, WorkoutMainInfo } from '@/common/types'
 import { Injectable } from '@nestjs/common'
 import { DataSource, Repository, SelectQueryBuilder } from 'typeorm'
 

@@ -1,21 +1,7 @@
 import { Public, User } from '@/decorators'
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Patch,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Patch, Post, Req, Res, UseGuards } from '@nestjs/common'
 import { Request, Response } from 'express'
-import {
-  AuthUserDto,
-  ChangePasswordDto,
-  EmailDto,
-} from '@/microservice/auth/dto'
+import { AuthUserDto, ChangePasswordDto, EmailDto } from '@/microservice/auth/dto'
 import { UserModel } from '@/db/model'
 import { ApiTags } from '@nestjs/swagger'
 import { GithubAuthGuard, GoogleOauthGuard } from '@/guards'
@@ -23,11 +9,12 @@ import * as _ from 'lodash'
 import { ConfigService } from '@nestjs/config'
 import { UserService } from '@/microservice/user/user.service'
 import { CustomError } from '@/custom-error'
-import { Payload, PROVIDER_TYPE, UserFromSocialMedia } from '@/common/types'
+import { EmailNotify, Payload, PROVIDER_TYPE, UserFromSocialMedia } from '@/common/types'
 import { WorkoutsService } from '@/microservice/workout/workout.service'
 import { JwtService } from '@nestjs/jwt'
 import { CryptoHelper } from '@/common/helpers'
-import { MailerService } from '@nestjs-modules/mailer'
+import { ClientProxy } from '@nestjs/microservices'
+import { NotificationPatterns } from '@/common/constants'
 
 type ReqWithSocialMediaUser = Request & {
   user: UserFromSocialMedia;
@@ -37,11 +24,12 @@ type ReqWithSocialMediaUser = Request & {
 @ApiTags('auth')
 export class AuthController {
   constructor(
+    @Inject('NOTIFICATION_SERVICE') private client: ClientProxy,
     private readonly configService: ConfigService,
     private readonly userService: UserService,
     private readonly workoutsService: WorkoutsService,
     private readonly jwtService: JwtService,
-    private readonly mailService: MailerService,
+    // private readonly mailService: MailerService,
   ) {}
 
   @Post('registration')
@@ -138,11 +126,14 @@ export class AuthController {
       const token = await this.jwtService.signAsync(payload)
       const message = `Forgot your password? If you didn't forget your password, please ignore this email! Password recovery link: ${this.configService.get('auth.clientUrl')}/?recovery=${token}`
       try {
-        this.mailService.sendMail({
-          to: user.email,
-          subject: `Password Recovery`,
-          text: message,
-        })
+        this.client.emit<keyof typeof NotificationPatterns, EmailNotify>(
+          NotificationPatterns.sendByEmail,
+          {
+            to: user.email,
+            subject: `Password Recovery`,
+            text: message,
+          },
+        )
         return res.header('Content-Type', 'application/json').send(true)
       } catch (e: unknown) {
         return res

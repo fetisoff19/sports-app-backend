@@ -2,18 +2,7 @@ import { DefaultDto } from '@/common/dto'
 import { UserModel } from '@/db/model'
 
 import { InjectQueue } from '@nestjs/bull'
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Patch,
-  Post,
-  Query,
-  Res,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common'
+import { Body, Controller, Delete, Get, Patch, Post, Query, Res, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { Queue } from 'bull'
 import { User } from '@/decorators'
 import { WorkoutsService } from '@/microservice/workout/workout.service'

@@ -4,12 +4,7 @@ import { UserRepository } from '@/db/repository'
 import { Injectable } from '@nestjs/common'
 import { omit } from 'lodash'
 import { AuthUserDto, ChangePasswordDto } from '@/microservice/auth/dto'
-import {
-  PROVIDER_TYPE,
-  PublicUser,
-  ROLE_TYPE,
-  UserFromSocialMedia,
-} from '@/common/types'
+import { PROVIDER_TYPE, PublicUser, ROLE_TYPE, UserFromSocialMedia } from '@/common/types'
 import { CryptoHelper } from '@/common/helpers'
 
 @Injectable()

@@ -1,15 +1,15 @@
 import { AuthController } from './auth.controller'
 import { Test } from '@nestjs/testing'
-import { ConfigService } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { UserService } from '@/microservice/user/user.service'
 import { WorkoutsService } from '@/microservice/workout/workout.service'
 import { JwtService } from '@nestjs/jwt'
-import { MailerService } from '@nestjs-modules/mailer'
 import { UserModel } from '@/db/model'
 import { Response } from 'express'
 import { AuthUserDto, ChangePasswordDto } from '@/microservice/auth/dto'
 import { CryptoHelper } from '@/common/helpers'
 import { omit } from 'lodash'
+import { ClientsModule, Transport } from '@nestjs/microservices'
 
 const authDto: AuthUserDto = {
   email: 'email@gmail.com',
@@ -56,6 +56,22 @@ describe('AuthController', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
+      imports: [
+        ClientsModule.registerAsync([
+          {
+            imports: [ConfigModule],
+            name: 'NOTIFICATION_SERVICE',
+            useFactory: async (configService: ConfigService) => ({
+              transport: Transport.REDIS,
+              options: {
+                port: configService.get<number>('redis.port'),
+                host: configService.get<string>('redis.host'),
+              },
+            }),
+            inject: [ConfigService],
+          },
+        ]),
+      ],
       controllers: [AuthController],
       providers: [
         {
@@ -83,10 +99,6 @@ describe('AuthController', () => {
         },
         {
           provide: JwtService,
-          useValue: {},
-        },
-        {
-          provide: MailerService,
           useValue: {},
         },
         {
