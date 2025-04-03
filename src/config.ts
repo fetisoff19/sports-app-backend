@@ -6,7 +6,7 @@ const config = () => ({
   env: process.env.NODE_ENV,
   host: process.env.HOST ?? '0.0.0.0',
   port: process.env.PORT,
-
+  client_url: process.env.CLIENT_URL,
   auth: {
     secret: process.env.APP_SECRET,
     expiresIn: process.env.EXPIRES_IN,
