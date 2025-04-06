@@ -28,5 +28,5 @@ jobs:
           version: 9
       - name: install dependencies
         run: pnpm install
-      - name: lint
+      - name: test
         run: pnpm run test
