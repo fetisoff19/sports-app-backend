@@ -2,16 +2,14 @@ import { OnQueueError, OnQueueStalled, Process, Processor } from '@nestjs/bull'
 import { Job } from 'bull'
 import * as _ from 'lodash'
 import { WorkoutsService } from '@/microservice/workout/workout.service'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { Cache } from 'cache-manager'
-import { Inject } from '@nestjs/common'
 import { WorkoutModel } from '@/db/model'
 import { PaginationDto } from '@/microservice/workout/dto'
+import { CacheService } from '@/microservice/cache/cache.service'
 
 @Processor('workout')
 export class WorkoutProcessor {
   constructor(
-    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
+    private readonly cacheService: CacheService,
     private readonly workoutsService: WorkoutsService,
   ) {}
 
@@ -54,7 +52,7 @@ export class WorkoutProcessor {
       if (!workout) {
         return
       }
-      await this.cacheService.set(
+      await this.cacheService.save(
         `user:${user.uuid}.workout:${workout.uuid}`,
         workout,
         3600 * 1000,
@@ -82,7 +80,7 @@ export class WorkoutProcessor {
         workout.note = dto.note
         await this.workoutsService.save(workout)
       }
-      await this.cacheService.del(`user:${user.uuid}.workout:${workout.uuid}`)
+      await this.cacheService.remove(`user:${user.uuid}.workout:${workout.uuid}`)
 
       return this.workoutsService.findOne(dto.uuid, user.uuid)
     } catch (e: unknown) {
@@ -99,7 +97,7 @@ export class WorkoutProcessor {
       if (!workout) {
         return
       }
-      await this.cacheService.del(`user:${user.uuid}.workout:${workout.uuid}`)
+      await this.cacheService.remove(`user:${user.uuid}.workout:${workout.uuid}`)
       return this.workoutsService.removeOne(workout)
     } catch (e: unknown) {
       console.error(e)

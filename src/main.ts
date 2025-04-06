@@ -7,8 +7,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 import * as fs from 'node:fs'
 import { join } from 'path'
-import { MicroserviceOptions, Transport } from '@nestjs/microservices'
-import { NotificationModule } from '@/microservice/notification/notification.module'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -17,6 +15,7 @@ async function bootstrap() {
   app.enableCors({
     exposedHeaders: 'Authorization',
     origin: [process.env.CLIENT_URL],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: false,
   })
@@ -41,21 +40,6 @@ async function bootstrap() {
   await app
     .listen(appPort, appHost)
     .then(() => console.log(`⚡️ [server]: Server is running on port = ${appPort}`))
-
-
-  const notificationApp = await NestFactory.createMicroservice<MicroserviceOptions>(
-    NotificationModule,
-    {
-      transport: Transport.REDIS,
-      options: {
-        port: configService.get<number>('redis.port'),
-        host: configService.get<string>('redis.host'),
-      },
-    },
-  )
-  await notificationApp
-    .listen()
-    .then(() => console.log(`⚡️ [microservice]: NotificationApp is running`))
 
 }
 

@@ -7,7 +7,7 @@ import { WorkoutsModule } from '@/microservice/workout/workout.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { PassportModule } from '@nestjs/passport'
 import { GithubStrategy, GoogleStrategy, JwtAuthStrategy } from '@/strateges/'
-import { ClientsModule, Transport } from '@nestjs/microservices'
+import { MailerModule } from '@nestjs-modules/mailer'
 
 @Module({
   imports: [
@@ -27,20 +27,24 @@ import { ClientsModule, Transport } from '@nestjs/microservices'
         }
       },
     }),
-    ClientsModule.registerAsync([
-      {
-        imports: [ConfigModule],
-        name: 'NOTIFICATION_SERVICE',
-        useFactory: async (configService: ConfigService) => ({
-          transport: Transport.REDIS,
-          options: {
-            port: configService.get<number>('redis.port'),
-            host: configService.get<string>('redis.host'),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) =>
+        ({
+          transport: {
+            host: configService.get<string>('mailer.host'),
+            secure: true,
+            auth: {
+              user: configService.get<string>('mailer.username'),
+              pass: configService.get<string>('mailer.password'),
+            },
+          },
+          defaults: {
+            from: `Sports App  <${configService.get<string>('mailer.username')}>`,
           },
         }),
-        inject: [ConfigService],
-      },
-    ]),
+    }),
   ],
   providers: [JwtAuthStrategy, GoogleStrategy, GithubStrategy],
   controllers: [AuthController],

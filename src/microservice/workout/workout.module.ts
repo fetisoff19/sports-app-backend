@@ -10,7 +10,7 @@ import { PolylineModule } from '@/microservice/polyline/polyline.module'
 import { PowerCurveModule } from '@/microservice/power-curve/power-curve.module'
 import { ChartsDataModule } from '@/microservice/charts-data/charts-data.module'
 import { WorkoutProcessor } from '@/microservice/workout/workout.processor'
-import { CacheModule } from '@nestjs/cache-manager'
+import { CacheModule } from '@/microservice/cache/cache.module'
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { CacheModule } from '@nestjs/cache-manager'
     ChartsDataModule,
     TypeOrmModule.forFeature([WorkoutModel, SessionModel]),
     BullModule.registerQueue({ name: 'workout' }),
-    CacheModule.register(),
+    CacheModule,
   ],
   controllers: [WorkoutsController],
   providers: [

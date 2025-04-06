@@ -1,7 +1,7 @@
 import { CryptoHelper, WorkoutParseHelper } from '@/common/helpers'
 import { CustomError } from '@/custom-error'
 import { SessionRepository, WorkoutRepository } from '@/db/repository'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import { ChartsDataService } from '@/microservice/charts-data/charts-data.service'
 import { PolylineService } from '@/microservice/polyline/polyline.service'
@@ -13,13 +13,12 @@ import * as fs from 'node:fs'
 import { ConfigService } from '@nestjs/config'
 import { join } from 'path'
 import { sports } from '@/common/constants'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { Cache } from 'cache-manager'
+import { CacheService } from '@/microservice/cache/cache.service'
 
 @Injectable()
 export class WorkoutsService {
   constructor(
-    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
+    private readonly cacheService: CacheService,
     private readonly workoutRepository: WorkoutRepository,
     private readonly sessionRepository: SessionRepository,
     private readonly chartDataService: ChartsDataService,
@@ -212,6 +211,7 @@ export class WorkoutsService {
   }
 
   public async removeAll(uuid: string) {
+    await this.removeFromCache(`user:${uuid}*`)
     const mapImages = await this.workoutRepository.findAllMapImages(uuid)
     const result = await this.workoutRepository.removeAllByUserUuid(uuid)
     for (const { map } of mapImages) {
@@ -221,10 +221,7 @@ export class WorkoutsService {
   }
 
   public async removeFromCache(pattern: string) {
-    const keys = await this.cacheService.store.keys(pattern)
-    for (const key of keys) {
-      await this.cacheService.del(key)
-    }
+    return this.cacheService.remove(pattern)
   }
 
   private removeMapImage(uuid: string) {

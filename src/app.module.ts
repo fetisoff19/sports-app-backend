@@ -16,9 +16,7 @@ import { ChartsDataModule } from '@/microservice/charts-data/charts-data.module'
 import { PowerCurveModule } from '@/microservice/power-curve/power-curve.module'
 import { StatsModule } from '@/microservice/stats/stats.module'
 import { JwtGuard } from '@/guards'
-import { CacheModule } from '@nestjs/cache-manager'
-import { RedisClientOptions } from 'redis'
-import { redisStore } from 'cache-manager-redis-yet'
+import { CacheModule } from '@/microservice/cache/cache.module'
 import { pinoConfig } from '@/common/helpers'
 import { LoggerModule } from 'nestjs-pino'
 
@@ -49,30 +47,25 @@ import { LoggerModule } from 'nestjs-pino'
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        redis: {
-          host: configService.get<string>('redis.host'),
-          port: configService.get<number>('redis.port'),
-        },
-        defaultJobOptions: {
-          removeOnComplete: true,
-          removeOnFail: true,
-          timeout: 60000,
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const host = configService.get<string>('redis.host')
+        const port = configService.get<string>('redis.port')
+        const password = configService.get<string>('redis.password')
+        const url = `redis://:${password}@${host}:${port}`
+        return {
+          redis: url,
+          defaultJobOptions: {
+            removeOnComplete: true,
+            removeOnFail: true,
+            timeout: 60000,
+          },
+        }
+      },
     }),
     TypeOrmModule.forRootAsync({
       useClass: DbConfig,
     }),
-    CacheModule.registerAsync<RedisClientOptions>({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        isGlobal: true,
-        store: redisStore,
-        url: `redis://${configService.get<string>('redis.host')}:${configService.get<number>('redis.port')}`,
-      }),
-    }),
+    CacheModule,
     UserModule,
     AuthModule,
     WorkoutsModule,
