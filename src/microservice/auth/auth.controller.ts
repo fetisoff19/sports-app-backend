@@ -126,7 +126,7 @@ export class AuthController {
       const token = await this.jwtService.signAsync(payload)
       const message = `Forgot your password? If you didn't forget your password, please ignore this email! Password recovery link: ${this.configService.get('auth.clientUrl')}/?recovery=${token}`
       try {
-        this.client.emit<keyof typeof NotificationPatterns, EmailNotify>(
+        this.client.send<keyof typeof NotificationPatterns, EmailNotify>(
           NotificationPatterns.sendByEmail,
           {
             to: user.email,
